@@ -1,0 +1,28 @@
+{
+    "name": "stories",
+    "version": "1.0.0",
+    "description": "node crud app for story publishing",
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js",
+        "dev": "nodemon app.js"
+    },
+    "author": "Amit BOra",
+    "license": "ISC",
+    "dependencies": {
+        "connect-mongo": "^4.5.0",
+        "dotenv": "^10.0.0",
+        "express": "^4.17.1",
+        "express-handlebars": "^5.3.3",
+        "express-session": "^1.17.2",
+        "method-override": "^3.0.0",
+        "moment": "^2.29.1",
+        "mongoose": "^5.13.7",
+        "morgan": "^1.10.0",
+        "passport": "^0.4.1",
+        "passport-google-oauth20": "^2.0.0"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.12"
+    }
+}

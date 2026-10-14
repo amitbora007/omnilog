@@ -1,28 +1,23 @@
 {
-    "name": "stories",
-    "version": "1.0.0",
-    "description": "node crud app for story publishing",
-    "main": "app.js",
-    "scripts": {
-        "start": "node app.js",
-        "dev": "nodemon app.js"
-    },
-    "author": "Amit BOra",
-    "license": "ISC",
-    "dependencies": {
-        "connect-mongo": "^4.5.0",
-        "dotenv": "^10.0.0",
-        "express": "^4.17.1",
-        "express-handlebars": "^5.3.3",
-        "express-session": "^1.17.2",
-        "method-override": "^3.0.0",
-        "moment": "^2.29.1",
-        "mongoose": "^5.13.7",
-        "morgan": "^1.10.0",
-        "passport": "^0.4.1",
-        "passport-google-oauth20": "^2.0.0"
-    },
-    "devDependencies": {
-        "nodemon": "^2.0.12"
-    }
+  "name": "omnilog",
+  "version": "2.0.0",
+  "description": "OmniLog - Modern multi-topic publishing platform for technical dev logs and personal blogs",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "concurrently -n \"API,CLIENT\" -c \"blue,green\" \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "start": "npm --prefix server start",
+    "build": "npm --prefix client run build",
+    "test": "npm --prefix server test"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "author": "Amit Bora",
+  "license": "ISC"
 }

@@ -1,0 +1,32 @@
+{
+  "name": "omnilog-server",
+  "version": "1.0.0",
+  "description": "OmniLog REST API - Pure JavaScript backend",
+  "type": "module",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "NODE_OPTIONS=--tls-max-v1.2 node src/app.js",
+    "dev": "NODE_OPTIONS=--tls-max-v1.2 nodemon src/app.js",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand --detectOpenHandles --forceExit"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.3.0",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.4.0",
+    "morgan": "^1.10.0",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.2",
+    "supertest": "^7.0.0"
+  },
+  "author": "Amit Bora",
+  "license": "ISC"
+}

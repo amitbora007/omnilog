@@ -5,9 +5,9 @@
   "type": "module",
   "main": "src/app.js",
   "scripts": {
+    "build": "echo 'No build required for server'",
     "start": "NODE_OPTIONS=--tls-max-v1.2 node src/app.js",
-    "dev": "NODE_OPTIONS=--tls-max-v1.2 nodemon src/app.js",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand --detectOpenHandles --forceExit"
+    "dev": "NODE_OPTIONS=--tls-max-v1.2 nodemon src/app.js"
   },
   "dependencies": {
     "cookie-parser": "^1.4.6",

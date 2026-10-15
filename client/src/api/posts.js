@@ -37,7 +37,8 @@ export const postsApi = {
     });
   },
 
-  getMyPosts: async ({ scope } = {}) => {
+  getMyPosts: async (options = {}) => {
+    const scope = typeof options === 'string' ? options : options?.scope;
     const query = scope ? `?scope=${scope}` : '';
     return await apiRequest(`/posts/my-posts${query}`);
   },

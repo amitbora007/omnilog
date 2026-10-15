@@ -11,6 +11,7 @@ import connectDB from './config/db.js';
 import { configurePassport } from './config/passport.js';
 import authRoutes from './routes/auth.js';
 import postRoutes from './routes/posts.js';
+import userRoutes from './routes/users.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 // Load environment variables
@@ -68,8 +69,8 @@ if (process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) {
   app.use(morgan('dev'));
 }
 
-// Health check endpoint
-app.get('/api/health', (req, res) => {
+// Health check endpoint (accessible via /api/health and /health)
+app.get(['/api/health', '/health'], (req, res) => {
   res.status(200).json({
     success: true,
     status: 'healthy',
@@ -79,9 +80,16 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Mount API routes
+// Mount API routes (support both /api/* and root paths)
 app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes);
+
 app.use('/api/posts', postRoutes);
+app.use('/posts', postRoutes);
+
+app.use('/api/users', userRoutes);
+app.use('/users', userRoutes);
+
 
 // 404 handler for unknown routes
 app.use('*', (req, res) => {

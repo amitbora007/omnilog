@@ -1,4 +1,11 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+export function getBaseUrl() {
+  const envUrl = (import.meta.env.VITE_API_URL || '').trim();
+  if (!envUrl) return '/api';
+  const cleanUrl = envUrl.replace(/\/+$/, '');
+  return cleanUrl.endsWith('/api') ? cleanUrl : `${cleanUrl}/api`;
+}
+
+export const API_BASE_URL = getBaseUrl();
 
 /**
  * Custom fetch wrapper that handles credentials, authorization headers,

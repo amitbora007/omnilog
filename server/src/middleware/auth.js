@@ -40,11 +40,39 @@ export const protect = async (req, res, next) => {
       });
     }
 
+    if (user.status === 'suspended') {
+      return res.status(403).json({
+        success: false,
+        error: 'Your account has been suspended. Please contact an administrator.',
+      });
+    }
+
     req.user = user;
     next();
   } catch (error) {
     next(error);
   }
+};
+
+/**
+ * Require Super Admin role
+ */
+export const requireAdmin = (req, res, next) => {
+  if (!req.user || req.user.role !== 'admin') {
+    return res.status(403).json({
+      success: false,
+      error: 'Access denied. Administrator privileges required.',
+    });
+  }
+
+  if (req.user.status === 'suspended') {
+    return res.status(403).json({
+      success: false,
+      error: 'Your administrator account has been suspended.',
+    });
+  }
+
+  next();
 };
 
 /**

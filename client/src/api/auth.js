@@ -1,6 +1,4 @@
-import { apiRequest } from './client.js';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+import { apiRequest, API_BASE_URL } from './client.js';
 
 export const authApi = {
   getGoogleAuthUrl: () => `${API_BASE_URL}/auth/google`,

@@ -32,13 +32,18 @@ export async function apiRequest(endpoint, options = {}) {
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
+      if (response.status === 401) {
+        localStorage.removeItem('omnilog_token');
+      }
       const errorMsg = data.error || data.message || `Request failed with status ${response.status}`;
       throw new Error(errorMsg);
     }
 
     return data;
   } catch (error) {
-    console.error(`API Error on [${options.method || 'GET'}] ${endpoint}:`, error.message);
+    if (!options.silent) {
+      console.error(`API Error on [${options.method || 'GET'}] ${endpoint}:`, error.message);
+    }
     throw error;
   }
 }

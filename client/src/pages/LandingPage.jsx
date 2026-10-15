@@ -7,14 +7,12 @@ import GoogleSignInButton from '../components/common/GoogleSignInButton.jsx';
 import PostCard from '../components/post/PostCard.jsx';
 import { PostCardSkeleton } from '../components/common/Skeleton.jsx';
 import {
-  Code2,
   ArrowRight,
   ShieldCheck,
   Tag,
   Terminal,
   Compass,
   Sparkles,
-  Layers,
   BookOpen,
 } from 'lucide-react';
 

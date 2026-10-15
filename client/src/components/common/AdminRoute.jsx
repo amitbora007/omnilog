@@ -1,9 +1,8 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { ShieldAlert } from 'lucide-react';
 import Button from './Button.jsx';
-import { Link } from 'react-router-dom';
 
 export default function AdminRoute({ children }) {
   const { user, isAuthenticated, loading } = useAuth();

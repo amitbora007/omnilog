@@ -23,10 +23,20 @@ export function AuthProvider({ children }) {
   }, []);
 
   const checkAuth = async () => {
+    const token = localStorage.getItem('omnilog_token');
+    // If no token exists, the user is an unauthenticated guest — avoid firing redundant 401 requests
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+
     try {
       const userData = await authApi.getMe();
       setUser(userData);
     } catch (err) {
+      // Purge invalid/expired token from local storage
+      localStorage.removeItem('omnilog_token');
       setUser(null);
     } finally {
       setLoading(false);
@@ -49,21 +59,6 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const adminLogin = async (credentials) => {
-    setLoading(true);
-    try {
-      const res = await authApi.adminLogin(credentials);
-      setUser(res.user);
-      return res;
-    } catch (err) {
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const devLogin = adminLogin;
-
   const value = {
     user,
     loading,
@@ -71,8 +66,6 @@ export function AuthProvider({ children }) {
     isAdmin: user?.role === 'admin',
     loginWithGoogle,
     logout,
-    adminLogin,
-    devLogin,
     refreshUser: checkAuth,
   };
 

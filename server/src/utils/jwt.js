@@ -40,6 +40,8 @@ export const sendTokenResponse = (user, statusCode, res) => {
       email: user.email,
       image: user.image,
       bio: user.bio,
+      role: user.role || 'user',
+      status: user.status || 'active',
     },
   });
 };

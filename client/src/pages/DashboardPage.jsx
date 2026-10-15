@@ -8,7 +8,7 @@ import Button from '../components/common/Button.jsx';
 import Badge from '../components/common/Badge.jsx';
 import Modal from '../components/common/Modal.jsx';
 import { TableRowSkeleton } from '../components/common/Skeleton.jsx';
-import { formatDate } from '../../src/utils/formatters.js';
+import { formatDate } from '../utils/formatters.js';
 import {
   PenSquare,
   FileText,
@@ -21,7 +21,6 @@ import {
   Search,
   AlertTriangle,
   Shield,
-  Users,
 } from 'lucide-react';
 
 export default function DashboardPage() {

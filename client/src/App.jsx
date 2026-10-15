@@ -8,7 +8,6 @@ import FeedPage from './pages/FeedPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import PostViewPage from './pages/PostViewPage.jsx';
 import EditorPage from './pages/EditorPage.jsx';
-import UserManagementPage from './pages/UserManagementPage.jsx';
 import AdminPage from './pages/AdminPage.jsx';
 import AdminRoute from './components/common/AdminRoute.jsx';
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../components/common/Toast.jsx';
 import { postsApi } from '../api/posts.js';
@@ -9,7 +9,7 @@ import Button from '../components/common/Button.jsx';
 import Badge from '../components/common/Badge.jsx';
 import Modal from '../components/common/Modal.jsx';
 import { TableRowSkeleton } from '../components/common/Skeleton.jsx';
-import { formatDate } from '../../src/utils/formatters.js';
+import { formatDate } from '../utils/formatters.js';
 import {
   Shield,
   ShieldCheck,
@@ -24,17 +24,12 @@ import {
   AlertTriangle,
   Globe,
   Lock,
-  Check,
-  X,
-  Layers,
-  ArrowRight,
   RefreshCw,
 } from 'lucide-react';
 
 export default function AdminPage({ defaultTab }) {
   const { user: currentAdmin } = useAuth();
   const { showToast } = useToast();
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Tab state derived from URL ?tab=posts | ?tab=users
@@ -453,7 +448,6 @@ export default function AdminPage({ defaultTab }) {
                 title="Refresh publications"
                 className="!min-h-[38px] text-xs font-semibold shrink-0"
               >
-                Refresh
               </Button>
             </div>
           </div>
@@ -687,7 +681,6 @@ export default function AdminPage({ defaultTab }) {
                 title="Refresh users"
                 className="!min-h-[38px] text-xs font-semibold shrink-0"
               >
-                Refresh
               </Button>
             </div>
           </div>

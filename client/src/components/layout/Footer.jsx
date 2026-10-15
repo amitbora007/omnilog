@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Code2, Heart, ExternalLink, Terminal, Shield } from 'lucide-react';
+import { Code2, Heart, Terminal, Shield } from 'lucide-react';
 
 export default function Footer() {
   return (

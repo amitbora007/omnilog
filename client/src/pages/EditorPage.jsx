@@ -13,7 +13,6 @@ import {
   Lock,
   Tag,
   AlertCircle,
-  Sparkles,
 } from 'lucide-react';
 
 export default function EditorPage() {

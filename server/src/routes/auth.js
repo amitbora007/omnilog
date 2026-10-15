@@ -1,6 +1,6 @@
 import express from 'express';
 import passport from 'passport';
-import { getMe, googleCallback, logout, devLogin, adminLogin } from '../controllers/authController.js';
+import { getMe, googleCallback, logout } from '../controllers/authController.js';
 import { protect } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -29,9 +29,5 @@ router.get('/me', protect, getMe);
 
 // Logout
 router.post('/logout', protect, logout);
-
-// Admin & Dev quick login (local development with Super Admin privileges)
-router.post('/admin-login', adminLogin);
-router.post('/dev-login', devLogin);
 
 export default router;

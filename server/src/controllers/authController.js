@@ -1,5 +1,5 @@
 import User from '../models/User.js';
-import { sendTokenResponse, generateToken } from '../utils/jwt.js';
+import { generateToken } from '../utils/jwt.js';
 
 /**
  * @desc    Get currently authenticated user
@@ -66,48 +66,3 @@ export const logout = (req, res) => {
   });
 };
 
-/**
-/**
- * @desc    Admin / Developer quick login with Super Admin privileges
- * @route   POST /api/auth/admin-login (or POST /api/auth/dev-login)
- * @access  Public (disabled in production)
- */
-export const adminLogin = async (req, res, next) => {
-  if (process.env.NODE_ENV === 'production') {
-    return res.status(403).json({
-      success: false,
-      error: 'Admin quick login is disabled in production',
-    });
-  }
-
-  try {
-    const {
-      email = 'admin@omnilog.local',
-      displayName = 'Super Admin',
-      role = 'admin',
-    } = req.body;
-
-    let user = await User.findOne({ email });
-    if (!user) {
-      user = await User.create({
-        googleId: `admin_${Date.now()}`,
-        displayName,
-        firstName: displayName.split(' ')[0] || 'Super',
-        lastName: displayName.split(' ')[1] || 'Admin',
-        email,
-        role: role || 'admin',
-        image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&h=200&q=80',
-        bio: 'OmniLog Super Administrator with full CRUD access.',
-      });
-    } else if (user.role !== 'admin' && role === 'admin') {
-      user.role = 'admin';
-      await user.save();
-    }
-
-    sendTokenResponse(user, 200, res);
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const devLogin = adminLogin;

@@ -11,7 +11,6 @@ import {
   Link as LinkIcon,
   Eye,
   Edit3,
-  FileCode2,
   Clock,
 } from 'lucide-react';
 import { sanitizeHtml } from '../../utils/sanitize.js';

@@ -5,7 +5,7 @@ import PostCard from '../components/post/PostCard.jsx';
 import TagFilter from '../components/post/TagFilter.jsx';
 import { PostCardSkeleton } from '../components/common/Skeleton.jsx';
 import Button from '../components/common/Button.jsx';
-import { Search, Compass, ChevronLeft, ChevronRight, X, Sparkles } from 'lucide-react';
+import { Search, Compass, ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 export default function FeedPage() {
   const [searchParams, setSearchParams] = useSearchParams();

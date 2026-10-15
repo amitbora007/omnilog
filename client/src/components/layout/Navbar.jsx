@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import Avatar from '../common/Avatar.jsx';
 import Button from '../common/Button.jsx';
 import GoogleSignInButton from '../common/GoogleSignInButton.jsx';
-import Modal from '../common/Modal.jsx';
 import {
   PenSquare,
   Compass,
@@ -14,31 +13,12 @@ import {
   Menu,
   X,
   Code2,
-  Users,
 } from 'lucide-react';
 
 export default function Navbar() {
-  const { user, isAuthenticated, loginWithGoogle, logout, adminLogin } = useAuth();
+  const { user, isAuthenticated, loginWithGoogle, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [adminModalOpen, setAdminModalOpen] = useState(false);
-  const [adminEmail, setAdminEmail] = useState('admin@omnilog.local');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigate = useNavigate();
-
-  const handleAdminLoginSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    try {
-      await adminLogin({ email: adminEmail, role: 'admin' });
-      setAdminModalOpen(false);
-      navigate('/dashboard');
-    } catch (err) {
-      alert(err.message || 'Admin login failed');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const navLinkClasses = ({ isActive }) =>
     `flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-semibold transition-all duration-150 ${
@@ -169,18 +149,6 @@ export default function Navbar() {
               </>
             ) : (
               <div className="flex items-center gap-2.5">
-                {import.meta.env.DEV && (
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    icon={Shield}
-                    onClick={() => setAdminModalOpen(true)}
-                    title="Dev-Only Quick Admin Login"
-                  >
-                    Dev Admin
-                  </Button>
-                )}
-
                 <GoogleSignInButton
                   size="sm"
                   text="Sign in with Google"
@@ -260,20 +228,6 @@ export default function Navbar() {
               </>
             ) : (
               <div className="pt-2 space-y-2">
-                {import.meta.env.DEV && (
-                  <Button
-                    variant="secondary"
-                    size="md"
-                    className="w-full"
-                    icon={Shield}
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      setAdminModalOpen(true);
-                    }}
-                  >
-                    Dev Admin Login
-                  </Button>
-                )}
                 <GoogleSignInButton
                   size="md"
                   className="w-full"
@@ -288,44 +242,6 @@ export default function Navbar() {
           </div>
         )}
       </header>
-
-      {/* Super Admin Login Modal (Dev Mode Only) */}
-      {import.meta.env.DEV && (
-        <Modal
-          isOpen={adminModalOpen}
-          onClose={() => setAdminModalOpen(false)}
-          title="Development Admin Login"
-        >
-          <div className="p-3 mb-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800 font-medium">
-            <strong>Development Environment Only:</strong> This quick-login bypass is disabled in production. In production, users authenticate via Google and are assigned roles via <code className="font-mono bg-white px-1 py-0.5 rounded border border-amber-200">ADMIN_EMAILS</code> or CLI seed script.
-          </div>
-          <p className="text-sm text-slate-600 mb-5 leading-relaxed">
-          Log in with Super Administrator privileges to create, read, update, and delete all publications across the entire application.
-        </p>
-        <form onSubmit={handleAdminLoginSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-              Admin Email
-            </label>
-            <input
-              type="email"
-              required
-              value={adminEmail}
-              onChange={(e) => setAdminEmail(e.target.value)}
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:bg-white focus:border-indigo-500 transition-colors font-mono"
-            />
-          </div>
-          <div className="flex justify-end gap-2.5 pt-3 border-t border-slate-100">
-            <Button variant="secondary" size="md" onClick={() => setAdminModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button variant="primary" size="md" type="submit" loading={isSubmitting}>
-              Login
-            </Button>
-          </div>
-        </form>
-      </Modal>
-      )}
     </>
   );
 }

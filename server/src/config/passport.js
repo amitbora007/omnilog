@@ -24,12 +24,27 @@ export const configurePassport = () => {
           const email = profile.emails && profile.emails[0] ? profile.emails[0].value : `${profile.id}@google.com`;
           const image = profile.photos && profile.photos[0] ? profile.photos[0].value : '';
 
+          const adminEmails = (process.env.ADMIN_EMAILS || '')
+            .split(',')
+            .map((e) => e.trim().toLowerCase())
+            .filter(Boolean);
+          const isWhitelistedAdmin = adminEmails.includes(email.toLowerCase());
+
           let user = await User.findOne({ googleId: profile.id });
+          if (!user && email) {
+            user = await User.findOne({ email: email.toLowerCase() });
+            if (user && !user.googleId) {
+              user.googleId = profile.id;
+            }
+          }
 
           if (user) {
             // Update profile info on login
             user.displayName = profile.displayName || user.displayName;
             user.image = image || user.image;
+            if (isWhitelistedAdmin && user.role !== 'admin') {
+              user.role = 'admin';
+            }
             await user.save();
             return done(null, user);
           }
@@ -41,6 +56,7 @@ export const configurePassport = () => {
             lastName: profile.name?.familyName || '',
             email,
             image,
+            role: isWhitelistedAdmin ? 'admin' : 'user',
           };
 
           user = await User.create(newUser);

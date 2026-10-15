@@ -8,6 +8,9 @@ import FeedPage from './pages/FeedPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import PostViewPage from './pages/PostViewPage.jsx';
 import EditorPage from './pages/EditorPage.jsx';
+import UserManagementPage from './pages/UserManagementPage.jsx';
+import AdminPage from './pages/AdminPage.jsx';
+import AdminRoute from './components/common/AdminRoute.jsx';
 
 export default function App() {
   return (
@@ -19,6 +22,30 @@ export default function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/feed" element={<FeedPage />} />
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute>
+                    <AdminPage />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/users"
+                element={
+                  <AdminRoute>
+                    <AdminPage defaultTab="users" />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/posts"
+                element={
+                  <AdminRoute>
+                    <AdminPage defaultTab="posts" />
+                  </AdminRoute>
+                }
+              />
               <Route path="/posts/new" element={<EditorPage />} />
               <Route path="/posts/edit/:id" element={<EditorPage />} />
               <Route path="/posts/:id" element={<PostViewPage />} />

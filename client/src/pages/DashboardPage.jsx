@@ -21,6 +21,7 @@ import {
   Search,
   AlertTriangle,
   Shield,
+  Users,
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -141,11 +142,20 @@ export default function DashboardPage() {
             )}
           </p>
         </div>
-        <Link to="/posts/new">
-          <Button variant="primary" size="md" icon={Plus}>
-            New Publication
-          </Button>
-        </Link>
+        <div className="flex items-center gap-3">
+          {user?.role === 'admin' && (
+            <Link to="/admin">
+              <Button variant="secondary" size="md" icon={Shield}>
+                Admin Console
+              </Button>
+            </Link>
+          )}
+          <Link to="/posts/new">
+            <Button variant="primary" size="md" icon={Plus}>
+              New Publication
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Metrics Row */}

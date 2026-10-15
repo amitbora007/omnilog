@@ -42,12 +42,21 @@ const UserSchema = new mongoose.Schema(
       type: String,
       enum: ['user', 'admin'],
       default: 'user',
+      index: true,
+    },
+    status: {
+      type: String,
+      enum: ['active', 'suspended'],
+      default: 'active',
+      index: true,
     },
   },
   {
     timestamps: true,
   }
 );
+
+UserSchema.index({ email: 1 });
 
 // Format returned JSON to remove internal mongo fields
 UserSchema.methods.toJSON = function () {

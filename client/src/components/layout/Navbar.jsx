@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   Code2,
+  Users,
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -22,7 +23,6 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [adminModalOpen, setAdminModalOpen] = useState(false);
   const [adminEmail, setAdminEmail] = useState('admin@omnilog.local');
-  const [adminName, setAdminName] = useState('Super Admin');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
@@ -30,7 +30,7 @@ export default function Navbar() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await adminLogin({ email: adminEmail, displayName: adminName, role: 'admin' });
+      await adminLogin({ email: adminEmail, role: 'admin' });
       setAdminModalOpen(false);
       navigate('/dashboard');
     } catch (err) {
@@ -76,6 +76,12 @@ export default function Navbar() {
               <NavLink to="/dashboard" className={navLinkClasses}>
                 <LayoutDashboard className="w-4 h-4 text-slate-400" />
                 Author Dashboard
+              </NavLink>
+            )}
+            {isAuthenticated && user?.role === 'admin' && (
+              <NavLink to="/admin" className={navLinkClasses}>
+                <Shield className="w-4 h-4 text-indigo-500" />
+                Admin Console
               </NavLink>
             )}
           </nav>
@@ -130,6 +136,15 @@ export default function Navbar() {
                           <LayoutDashboard className="w-4 h-4 text-slate-400" />
                           My Dashboard
                         </Link>
+                        {user?.role === 'admin' && (
+                          <Link
+                            to="/admin"
+                            className="flex items-center gap-2.5 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-indigo-600 font-medium transition-colors"
+                          >
+                            <Shield className="w-4 h-4 text-indigo-500" />
+                            Admin Console
+                          </Link>
+                        )}
                         <Link
                           to="/posts/new"
                           className="flex items-center gap-2.5 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-indigo-600 font-medium transition-colors"
@@ -154,15 +169,17 @@ export default function Navbar() {
               </>
             ) : (
               <div className="flex items-center gap-2.5">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  icon={Shield}
-                  onClick={() => setAdminModalOpen(true)}
-                  title="Super Admin Login"
-                >
-                  Admin
-                </Button>
+                {import.meta.env.DEV && (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    icon={Shield}
+                    onClick={() => setAdminModalOpen(true)}
+                    title="Dev-Only Quick Admin Login"
+                  >
+                    Dev Admin
+                  </Button>
+                )}
 
                 <GoogleSignInButton
                   size="sm"
@@ -207,6 +224,16 @@ export default function Navbar() {
                   <LayoutDashboard className="w-4 h-4" />
                   Author Dashboard
                 </NavLink>
+                {user?.role === 'admin' && (
+                  <NavLink
+                    to="/admin"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={navLinkClasses}
+                  >
+                    <Shield className="w-4 h-4 text-indigo-500" />
+                    Admin Console
+                  </NavLink>
+                )}
                 <Link
                   to="/posts/new"
                   onClick={() => setMobileMenuOpen(false)}
@@ -233,18 +260,20 @@ export default function Navbar() {
               </>
             ) : (
               <div className="pt-2 space-y-2">
-                <Button
-                  variant="secondary"
-                  size="md"
-                  className="w-full"
-                  icon={Shield}
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    setAdminModalOpen(true);
-                  }}
-                >
-                  Admin Login
-                </Button>
+                {import.meta.env.DEV && (
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    className="w-full"
+                    icon={Shield}
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setAdminModalOpen(true);
+                    }}
+                  >
+                    Dev Admin Login
+                  </Button>
+                )}
                 <GoogleSignInButton
                   size="md"
                   className="w-full"
@@ -260,28 +289,20 @@ export default function Navbar() {
         )}
       </header>
 
-      {/* Super Admin Login Modal */}
-      <Modal
-        isOpen={adminModalOpen}
-        onClose={() => setAdminModalOpen(false)}
-        title="Super Admin Login"
-      >
-        <p className="text-sm text-slate-600 mb-5 leading-relaxed">
+      {/* Super Admin Login Modal (Dev Mode Only) */}
+      {import.meta.env.DEV && (
+        <Modal
+          isOpen={adminModalOpen}
+          onClose={() => setAdminModalOpen(false)}
+          title="Development Admin Login"
+        >
+          <div className="p-3 mb-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800 font-medium">
+            <strong>Development Environment Only:</strong> This quick-login bypass is disabled in production. In production, users authenticate via Google and are assigned roles via <code className="font-mono bg-white px-1 py-0.5 rounded border border-amber-200">ADMIN_EMAILS</code> or CLI seed script.
+          </div>
+          <p className="text-sm text-slate-600 mb-5 leading-relaxed">
           Log in with Super Administrator privileges to create, read, update, and delete all publications across the entire application.
         </p>
         <form onSubmit={handleAdminLoginSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-              Admin Display Name
-            </label>
-            <input
-              type="text"
-              required
-              value={adminName}
-              onChange={(e) => setAdminName(e.target.value)}
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:bg-white focus:border-indigo-500 transition-colors"
-            />
-          </div>
           <div>
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
               Admin Email
@@ -299,11 +320,12 @@ export default function Navbar() {
               Cancel
             </Button>
             <Button variant="primary" size="md" type="submit" loading={isSubmitting}>
-              Login as Super Admin
+              Login
             </Button>
           </div>
         </form>
       </Modal>
+      )}
     </>
   );
 }

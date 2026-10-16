@@ -4,36 +4,73 @@
 
 @layer base {
   html {
-    @apply scroll-smooth text-slate-800;
+    @apply scroll-smooth text-slate-100 bg-[#030712];
+    color-scheme: dark;
   }
 
   body {
-    @apply bg-slate-50 text-slate-800 antialiased font-sans selection:bg-indigo-100 selection:text-indigo-900 min-h-screen;
+    @apply bg-[#030712] text-slate-100 antialiased font-sans selection:bg-indigo-500/30 selection:text-indigo-200 min-h-screen overflow-x-hidden;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   /* Accessible focus indicators */
   :focus-visible {
-    @apply outline-none ring-2 ring-indigo-500 ring-offset-2 ring-offset-white;
+    @apply outline-none ring-2 ring-indigo-400 ring-offset-2 ring-offset-[#030712];
   }
 }
 
-/* Custom Scrollbars */
+/* Glassmorphism System Classes */
+.glass-panel {
+  @apply backdrop-blur-xl bg-slate-900/60 border border-white/10 shadow-card;
+}
+
+.glass-card {
+  @apply backdrop-blur-md bg-slate-900/40 border border-white/10 hover:border-indigo-500/30 transition-all;
+}
+
+.glass-dock {
+  @apply backdrop-blur-2xl bg-slate-950/70 border border-white/10 shadow-2xl;
+}
+
+/* 3D Transform Utilities */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.perspective-2000 {
+  perspective: 2000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/* Custom Sleek Dark Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(3, 7, 18, 0.6);
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-300 rounded-full hover:bg-slate-400 transition-colors;
+  background: rgba(99, 102, 241, 0.35);
+  border-radius: 9999px;
+  transition: background-color 0.2s ease;
 }
 
-/* Shimmer Animation for Skeletons */
-@keyframes shimmer {
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.6);
+}
+
+/* Shimmer Animation for Dark Skeletons */
+@keyframes shimmer-dark {
   0% {
     background-position: -200% 0;
   }
@@ -45,24 +82,24 @@
 .animate-shimmer {
   background: linear-gradient(
     90deg,
-    rgba(241, 245, 249, 1) 0%,
-    rgba(226, 232, 240, 0.7) 50%,
-    rgba(241, 245, 249, 1) 100%
+    rgba(15, 23, 42, 0.6) 0%,
+    rgba(30, 41, 59, 0.8) 50%,
+    rgba(15, 23, 42, 0.6) 100%
   );
   background-size: 200% 100%;
-  animation: shimmer 1.8s infinite ease-in-out;
+  animation: shimmer-dark 1.8s infinite ease-in-out;
 }
 
-/* Editorial Article Content Formatting */
+/* Editorial Article Content Formatting (Dark Mode) */
 .post-content {
-  color: #334155;
+  color: #cbd5e1;
   font-size: 1.0625rem;
-  line-height: 1.8;
+  line-height: 1.85;
   word-break: break-word;
 }
 
 .post-content pre {
-  @apply bg-[#0b0f19] text-slate-100 p-5 rounded-2xl overflow-x-auto my-6 text-[13.5px] font-mono leading-relaxed border border-slate-800/80 shadow-card;
+  @apply bg-slate-950/90 text-slate-100 p-5 rounded-2xl overflow-x-auto my-6 text-[13.5px] font-mono leading-relaxed border border-white/10 shadow-card;
 }
 
 .post-content code {
@@ -70,47 +107,68 @@
 }
 
 .post-content :not(pre) > code {
-  @apply bg-slate-100 text-indigo-600 px-1.5 py-0.5 rounded-md text-xs font-semibold font-mono border border-slate-200/70;
+  @apply bg-indigo-950/60 text-indigo-300 px-1.5 py-0.5 rounded-md text-xs font-semibold font-mono border border-indigo-700/40;
 }
 
 .post-content h1 {
-  @apply text-3xl sm:text-4xl font-extrabold text-slate-900 mt-10 mb-5 tracking-tight;
+  @apply text-3xl sm:text-4xl font-extrabold text-white mt-10 mb-5 tracking-tight;
 }
 
 .post-content h2 {
-  @apply text-2xl sm:text-3xl font-bold text-slate-900 mt-8 mb-4 tracking-tight border-b border-slate-100 pb-2.5;
+  @apply text-2xl sm:text-3xl font-bold text-white mt-8 mb-4 tracking-tight;
 }
 
 .post-content h3 {
-  @apply text-xl font-bold text-slate-900 mt-6 mb-3 tracking-tight;
+  @apply text-xl font-bold text-slate-100 mt-6 mb-3 tracking-tight;
 }
 
 .post-content p {
-  @apply my-4 text-slate-700 leading-relaxed;
+  @apply my-4 text-slate-300 leading-relaxed;
+}
+
+.post-content div {
+  @apply min-h-[1.5em] leading-relaxed;
+}
+
+.post-content div:empty,
+.post-content p:empty {
+  min-height: 1.5em;
 }
 
 .post-content ul {
-  @apply list-disc list-outside ml-6 my-4 space-y-2 text-slate-700;
+  @apply list-disc list-outside ml-6 my-4 space-y-2 text-slate-300;
 }
 
 .post-content ol {
-  @apply list-decimal list-outside ml-6 my-4 space-y-2 text-slate-700;
+  @apply list-decimal list-outside ml-6 my-4 space-y-2 text-slate-300;
 }
 
-.post-content blockquote {
-  @apply border-l-4 border-indigo-500 pl-5 py-2 italic my-6 text-slate-600 bg-indigo-50/40 rounded-r-xl border-dashed;
+/* Editorial Blockquote (only intentional quote blocks) */
+.post-content blockquote:not([style*="border: none"]):not([style*="border:none"]):not([style*="margin"]) {
+  @apply border-l-4 border-indigo-500 pl-5 py-2 italic my-6 text-slate-300 bg-indigo-950/30 rounded-r-xl border-dashed;
+}
+
+/* Indented content generated by Indent tool: preserve normal non-italic styling */
+.post-content blockquote[style*="border: none"],
+.post-content blockquote[style*="border:none"],
+.post-content blockquote[style*="margin"],
+.post-content [style*="margin-left"] {
+  border: none !important;
+  background: transparent !important;
+  font-style: normal !important;
+  padding-left: 0 !important;
 }
 
 .post-content a {
-  @apply text-indigo-600 hover:text-indigo-800 underline underline-offset-2 font-medium transition-colors;
+  @apply text-indigo-400 hover:text-indigo-300 underline underline-offset-2 font-medium transition-colors;
 }
 
 .post-content img {
-  @apply rounded-2xl max-w-full h-auto my-6 border border-slate-200/80 shadow-card;
+  @apply rounded-2xl max-w-full h-auto my-6 border border-white/10 shadow-card;
 }
 
 .post-content hr {
-  @apply my-8 border-t border-slate-200;
+  @apply my-8 border-t border-white/10;
 }
 
 .post-content table {
@@ -118,9 +176,17 @@
 }
 
 .post-content th {
-  @apply bg-slate-100/80 text-slate-700 font-bold p-3 border border-slate-200;
+  @apply bg-slate-900/80 text-slate-200 font-bold p-3 border border-white/10;
 }
 
 .post-content td {
-  @apply p-3 border border-slate-200 text-slate-600;
+  @apply p-3 border border-white/10 text-slate-300;
+}
+
+/* Contenteditable Placeholder */
+[contenteditable][data-placeholder]:empty:before {
+  content: attr(data-placeholder);
+  color: #64748b;
+  cursor: text;
+  pointer-events: none;
 }

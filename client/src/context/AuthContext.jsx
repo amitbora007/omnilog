@@ -6,11 +6,20 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState(null);
 
   useEffect(() => {
-    // Check if token was passed in query parameter from Google OAuth callback
+    // Check if token or error was passed in query parameter from Google OAuth callback
     const urlParams = new URLSearchParams(window.location.search);
     const tokenFromUrl = urlParams.get('token');
+    const errorFromUrl = urlParams.get('error');
+
+    if (errorFromUrl) {
+      setAuthError(decodeURIComponent(errorFromUrl));
+      // Clean query parameter from URL without reloading
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
 
     if (tokenFromUrl) {
       localStorage.setItem('omnilog_token', tokenFromUrl);
@@ -34,13 +43,26 @@ export function AuthProvider({ children }) {
     try {
       const userData = await authApi.getMe();
       setUser(userData);
+      setAuthError(null);
     } catch (err) {
       // Purge invalid/expired token from local storage
       localStorage.removeItem('omnilog_token');
       setUser(null);
+      if (
+        err.message &&
+        (err.message.includes('deactivated') ||
+          err.message.includes('suspended') ||
+          err.message.includes('customer support'))
+      ) {
+        setAuthError(err.message);
+      }
     } finally {
       setLoading(false);
     }
+  };
+
+  const clearAuthError = () => {
+    setAuthError(null);
   };
 
   const loginWithGoogle = () => {
@@ -64,6 +86,8 @@ export function AuthProvider({ children }) {
     loading,
     isAuthenticated: !!user,
     isAdmin: user?.role === 'admin',
+    authError,
+    clearAuthError,
     loginWithGoogle,
     logout,
     refreshUser: checkAuth,

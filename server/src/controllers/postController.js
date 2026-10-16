@@ -155,7 +155,6 @@ export const updatePost = async (req, res, next) => {
     if (status) post.status = status;
     if (tags !== undefined) post.tags = normalizeTags(tags);
 
-    post.updatedAt = Date.now();
     await post.save();
     await post.populate('author', 'displayName firstName lastName image');
 
@@ -196,7 +195,11 @@ export const deletePost = async (req, res, next) => {
       });
     }
 
-    await Post.findByIdAndDelete(req.params.id);
+    if (typeof post.deleteOne === 'function') {
+      await post.deleteOne();
+    } else {
+      await Post.findByIdAndDelete(req.params.id);
+    }
 
     res.status(200).json({
       success: true,

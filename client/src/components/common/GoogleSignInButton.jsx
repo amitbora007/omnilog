@@ -26,7 +26,7 @@ export default function GoogleSignInButton({
       type="button"
       onClick={onClick}
       disabled={disabled || loading}
-      className={`inline-flex items-center justify-center font-semibold rounded-xl bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 border border-slate-300/90 hover:border-slate-400 shadow-xs transition-all duration-150 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none whitespace-nowrap shrink-0 ${
+      className={`inline-flex items-center justify-center font-semibold rounded-xl bg-slate-900/90 hover:bg-slate-800 active:bg-slate-950 text-slate-100 border border-white/15 hover:border-white/25 shadow-card backdrop-blur-md transition-all duration-150 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#030712] disabled:opacity-50 disabled:cursor-not-allowed select-none whitespace-nowrap shrink-0 ${
         sizes[size] || sizes.md
       } ${className}`}
       {...props}

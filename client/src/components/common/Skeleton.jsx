@@ -3,7 +3,7 @@ import React from 'react';
 export function Skeleton({ className = '' }) {
   return (
     <div
-      className={`animate-shimmer rounded-xl bg-slate-200/80 ${className}`}
+      className={`animate-shimmer rounded-xl bg-slate-800/60 ${className}`}
       aria-hidden="true"
     />
   );
@@ -11,7 +11,7 @@ export function Skeleton({ className = '' }) {
 
 export function PostCardSkeleton() {
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/80 p-6 flex flex-col h-full shadow-card animate-pulse">
+    <div className="bg-slate-900/60 rounded-2xl border border-white/10 p-6 flex flex-col h-full shadow-card animate-pulse">
       <div className="flex items-center justify-between gap-2 mb-4">
         <div className="flex gap-2">
           <Skeleton className="h-5 w-16 rounded-full" />
@@ -27,7 +27,7 @@ export function PostCardSkeleton() {
       <Skeleton className="h-4 w-5/6 rounded mb-2" />
       <Skeleton className="h-4 w-2/3 rounded mb-6 flex-1" />
 
-      <div className="pt-4 border-t border-slate-100 flex items-center justify-between mt-auto">
+      <div className="pt-4 border-t border-white/5 flex items-center justify-between mt-auto">
         <div className="flex items-center gap-3">
           <Skeleton className="w-8 h-8 rounded-full" />
           <div className="space-y-1.5">
@@ -43,7 +43,7 @@ export function PostCardSkeleton() {
 
 export function TableRowSkeleton() {
   return (
-    <tr className="animate-pulse border-b border-slate-100">
+    <tr className="animate-pulse border-b border-white/5">
       <td className="px-6 py-4">
         <Skeleton className="h-5 w-48 rounded" />
       </td>
@@ -86,7 +86,7 @@ export function ArticleSkeleton() {
       <Skeleton className="h-10 w-4/5 rounded-xl mb-3" />
       <Skeleton className="h-10 w-3/5 rounded-xl mb-6" />
 
-      <div className="flex items-center gap-3 pb-8 border-b border-slate-200 mb-8">
+      <div className="flex items-center gap-3 pb-8 border-b border-white/10 mb-8">
         <Skeleton className="w-12 h-12 rounded-full" />
         <div className="space-y-2">
           <Skeleton className="h-4 w-32 rounded" />
@@ -94,7 +94,7 @@ export function ArticleSkeleton() {
         </div>
       </div>
 
-      <div className="bg-white p-8 rounded-3xl border border-slate-200/80 space-y-4">
+      <div className="bg-slate-900/60 p-8 rounded-3xl border border-white/10 space-y-4 backdrop-blur-md">
         <Skeleton className="h-4 w-full rounded" />
         <Skeleton className="h-4 w-full rounded" />
         <Skeleton className="h-4 w-5/6 rounded" />

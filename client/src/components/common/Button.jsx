@@ -14,19 +14,19 @@ export default function Button({
   ...props
 }) {
   const baseStyles =
-    'inline-flex items-center justify-center font-semibold rounded-xl whitespace-nowrap shrink-0 transition-all duration-150 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 select-none';
+    'inline-flex items-center justify-center font-semibold rounded-xl whitespace-nowrap shrink-0 transition-all duration-150 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#030712] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 select-none';
 
   const variants = {
     primary:
-      'bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white shadow-xs shadow-indigo-100 focus-visible:ring-indigo-500 border border-transparent',
+      'bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-glow-indigo border border-indigo-400/30 focus-visible:ring-indigo-400 active:scale-[0.97]',
     secondary:
-      'bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 border border-slate-200/90 hover:border-slate-300 shadow-xs focus-visible:ring-slate-400',
+      'bg-slate-900/80 hover:bg-slate-800 text-slate-200 border border-white/10 hover:border-white/20 shadow-card backdrop-blur-md focus-visible:ring-slate-400 active:scale-[0.97]',
     outline:
-      'border border-slate-300/90 hover:border-slate-400 bg-transparent hover:bg-slate-50 active:bg-slate-100 text-slate-700 focus-visible:ring-indigo-500',
+      'border border-white/15 hover:border-indigo-400/40 bg-white/[0.04] hover:bg-white/[0.08] text-slate-200 backdrop-blur-sm focus-visible:ring-indigo-400 active:scale-[0.97]',
     danger:
-      'bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white shadow-xs shadow-rose-100 focus-visible:ring-rose-500 border border-transparent',
+      'bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white border border-rose-500/40 shadow-lg shadow-rose-950/40 focus-visible:ring-rose-400 active:scale-[0.97]',
     ghost:
-      'bg-transparent hover:bg-slate-100/80 active:bg-slate-200/80 text-slate-600 hover:text-slate-900 focus-visible:ring-slate-400',
+      'bg-transparent hover:bg-white/[0.06] text-slate-300 hover:text-white focus-visible:ring-slate-400 active:scale-[0.97]',
   };
 
   const sizes = {

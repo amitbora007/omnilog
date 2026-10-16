@@ -30,26 +30,26 @@ export const getUsers = async (req, res, next) => {
       query.$or = [{ displayName: searchRegex }, { email: searchRegex }];
     }
 
-    const total = await User.countDocuments(query);
-    const users = await User.find(query)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
-
-    // Aggregate post statistics per user in a single fast query
-    const postStatsAgg = await Post.aggregate([
-      {
-        $group: {
-          _id: '$author',
-          total: { $sum: 1 },
-          public: {
-            $sum: { $cond: [{ $eq: ['$status', 'public'] }, 1, 0] },
-          },
-          private: {
-            $sum: { $cond: [{ $eq: ['$status', 'private'] }, 1, 0] },
+    // Execute queries concurrently in parallel to minimize database latency
+    const [total, users, postStatsAgg, totalUsers, adminCount] = await Promise.all([
+      User.countDocuments(query),
+      User.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
+      Post.aggregate([
+        {
+          $group: {
+            _id: '$author',
+            total: { $sum: 1 },
+            public: {
+              $sum: { $cond: [{ $eq: ['$status', 'public'] }, 1, 0] },
+            },
+            private: {
+              $sum: { $cond: [{ $eq: ['$status', 'private'] }, 1, 0] },
+            },
           },
         },
-      },
+      ]),
+      User.countDocuments(),
+      User.countDocuments({ role: 'admin' }),
     ]);
 
     const statsMap = new Map();
@@ -63,9 +63,6 @@ export const getUsers = async (req, res, next) => {
       }
     });
 
-    // Summary counts for dashboard metrics
-    const totalUsers = await User.countDocuments();
-    const adminCount = await User.countDocuments({ role: 'admin' });
     const userCount = totalUsers - adminCount;
 
     // Attach postStats to each user object
@@ -219,7 +216,7 @@ export const updateUser = async (req, res, next) => {
     if (
       req.user._id.toString() === user._id.toString() &&
       status !== undefined &&
-      status === 'suspended'
+      (status === 'suspended' || status === 'inactive')
     ) {
       return res.status(400).json({
         success: false,
@@ -265,7 +262,7 @@ export const updateUser = async (req, res, next) => {
     }
 
     if (role !== undefined) user.role = role === 'admin' ? 'admin' : 'user';
-    if (status !== undefined) user.status = status === 'suspended' ? 'suspended' : 'active';
+    if (status !== undefined) user.status = (status === 'suspended' || status === 'inactive') ? status : 'active';
     if (bio !== undefined) user.bio = bio.trim();
     if (image !== undefined) user.image = image.trim();
 

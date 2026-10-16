@@ -15,14 +15,21 @@ router.get(
 );
 
 // Google OAuth callback
-router.get(
-  '/google/callback',
-  passport.authenticate('google', {
-    failureRedirect: `${process.env.CLIENT_URL || 'http://localhost:5173'}/login?error=oauth_failed`,
-    session: false,
-  }),
-  googleCallback
-);
+router.get('/google/callback', (req, res, next) => {
+  passport.authenticate('google', { session: false }, (err, user, info) => {
+    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+    if (err) {
+      console.error('Google Auth Error:', err);
+      return res.redirect(`${clientUrl}/?error=${encodeURIComponent(err.message || 'Authentication failed')}`);
+    }
+    if (!user) {
+      const errorMsg = info?.message || 'Your account is deactivated, please contact customer support.';
+      return res.redirect(`${clientUrl}/?error=${encodeURIComponent(errorMsg)}`);
+    }
+    req.user = user;
+    return googleCallback(req, res);
+  })(req, res, next);
+});
 
 // Current user profile
 router.get('/me', protect, getMe);

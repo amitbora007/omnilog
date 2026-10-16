@@ -9,6 +9,20 @@ import { generateToken } from '../utils/jwt.js';
 export const getMe = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found.',
+      });
+    }
+
+    if (user.status === 'suspended' || user.status === 'inactive') {
+      return res.status(403).json({
+        success: false,
+        error: 'Your account is deactivated, please contact customer support.',
+      });
+    }
+
     res.status(200).json({
       success: true,
       data: user,
@@ -25,8 +39,15 @@ export const getMe = async (req, res, next) => {
  */
 export const googleCallback = async (req, res) => {
   try {
-    const token = generateToken(req.user._id);
     const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+
+    if (req.user && (req.user.status === 'suspended' || req.user.status === 'inactive')) {
+      return res.redirect(
+        `${clientUrl}/?error=${encodeURIComponent('Your account is deactivated, please contact customer support.')}`
+      );
+    }
+
+    const token = generateToken(req.user._id);
 
     // Set secure cookie
     const isProduction = process.env.NODE_ENV === 'production';
@@ -42,7 +63,7 @@ export const googleCallback = async (req, res) => {
   } catch (error) {
     console.error('Google Callback Error:', error);
     const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
-    res.redirect(`${clientUrl}/login?error=auth_failed`);
+    res.redirect(`${clientUrl}/?error=auth_failed`);
   }
 };
 

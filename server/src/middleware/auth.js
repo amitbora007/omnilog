@@ -2,19 +2,23 @@ import { verifyToken } from '../utils/jwt.js';
 import User from '../models/User.js';
 
 /**
+ * Helper to extract JWT token from Authorization header or cookie
+ */
+export const extractToken = (req) => {
+  if (req.headers?.authorization && req.headers.authorization.startsWith('Bearer')) {
+    return req.headers.authorization.split(' ')[1];
+  }
+  if (req.cookies && req.cookies.token) {
+    return req.cookies.token;
+  }
+  return null;
+};
+
+/**
  * Protect routes - requires a valid JWT cookie or Bearer token
  */
 export const protect = async (req, res, next) => {
-  let token;
-
-  // Check Authorization Bearer header
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    token = req.headers.authorization.split(' ')[1];
-  }
-  // Fallback to HttpOnly cookie
-  else if (req.cookies && req.cookies.token) {
-    token = req.cookies.token;
-  }
+  const token = extractToken(req);
 
   if (!token) {
     return res.status(401).json({
@@ -40,10 +44,10 @@ export const protect = async (req, res, next) => {
       });
     }
 
-    if (user.status === 'suspended') {
+    if (user.status === 'suspended' || user.status === 'inactive') {
       return res.status(403).json({
         success: false,
-        error: 'Your account has been suspended. Please contact an administrator.',
+        error: 'Your account is deactivated, please contact customer support.',
       });
     }
 
@@ -65,10 +69,10 @@ export const requireAdmin = (req, res, next) => {
     });
   }
 
-  if (req.user.status === 'suspended') {
+  if (req.user.status === 'suspended' || req.user.status === 'inactive') {
     return res.status(403).json({
       success: false,
-      error: 'Your administrator account has been suspended.',
+      error: 'Your administrator account has been suspended. Your account is deactivated, please contact customer support.',
     });
   }
 
@@ -79,13 +83,7 @@ export const requireAdmin = (req, res, next) => {
  * Optional auth - attaches req.user if a valid token is present, but doesn't block if missing
  */
 export const optionalAuth = async (req, res, next) => {
-  let token;
-
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    token = req.headers.authorization.split(' ')[1];
-  } else if (req.cookies && req.cookies.token) {
-    token = req.cookies.token;
-  }
+  const token = extractToken(req);
 
   if (token) {
     const decoded = verifyToken(token);

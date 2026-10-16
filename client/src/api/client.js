@@ -32,7 +32,7 @@ export async function apiRequest(endpoint, options = {}) {
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      if (response.status === 401) {
+      if (response.status === 401 || response.status === 403) {
         localStorage.removeItem('omnilog_token');
       }
       const errorMsg = data.error || data.message || `Request failed with status ${response.status}`;

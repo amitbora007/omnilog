@@ -12,9 +12,9 @@ export const sanitizeHtml = (dirtyHtml = '') => {
       'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
       'p', 'br', 'b', 'i', 'strong', 'em', 'u', 's',
       'ul', 'ol', 'li', 'blockquote',
-      'pre', 'code', 'span',
+      'pre', 'code', 'span', 'div',
       'a', 'img', 'hr', 'table', 'thead', 'tbody', 'tr', 'th', 'td'
     ],
-    ALLOWED_ATTR: ['href', 'title', 'target', 'rel', 'src', 'alt', 'class'],
+    ALLOWED_ATTR: ['href', 'title', 'target', 'rel', 'src', 'alt', 'class', 'style'],
   });
 };

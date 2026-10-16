@@ -39,6 +39,13 @@ export const configurePassport = () => {
           }
 
           if (user) {
+            // Reject inactive or suspended accounts
+            if (user.status === 'suspended' || user.status === 'inactive') {
+              return done(null, false, {
+                message: 'Your account is deactivated, please contact customer support.',
+              });
+            }
+
             // Update profile info on login
             user.displayName = profile.displayName || user.displayName;
             user.image = image || user.image;

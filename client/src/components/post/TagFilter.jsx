@@ -15,10 +15,10 @@ export default function TagFilter({ selectedTag = 'all', onSelectTag, availableT
             key={tag}
             type="button"
             onClick={() => onSelectTag(tag)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-150 capitalize focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 active:scale-95 select-none ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-150 capitalize focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 active:scale-95 select-none ${
               isSelected
-                ? 'bg-indigo-600 text-white shadow-xs shadow-indigo-100 font-mono'
-                : 'bg-white text-slate-600 border border-slate-200/90 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 font-mono'
+                ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-glow-indigo border border-indigo-400/40 font-mono'
+                : 'bg-slate-900/70 text-slate-400 border border-white/10 hover:border-white/20 hover:text-white hover:bg-slate-800/80 font-mono backdrop-blur-sm'
             }`}
           >
             {tag === 'all' ? 'All Publications' : `#${tag}`}

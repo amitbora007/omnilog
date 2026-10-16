@@ -266,18 +266,18 @@ export default function AdminPage({ defaultTab }) {
       {/* ---------------------------------------------------- */}
       {/* CONSOLE HEADER & CONTEXTUAL CTAS */}
       {/* ---------------------------------------------------- */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-slate-200/80">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-white/10">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
+            <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
               Super Admin Console
             </h1>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-mono font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-xs">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-mono font-bold bg-indigo-950/80 text-indigo-300 border border-indigo-700/60 shadow-glow-indigo">
               <Shield className="w-3.5 h-3.5" />
               SUPER ADMIN
             </span>
           </div>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-400 mt-1">
             Centralized control center to monitor and manage all platform publications, author content, and user accounts.
           </p>
         </div>
@@ -301,22 +301,22 @@ export default function AdminPage({ defaultTab }) {
       {/* ---------------------------------------------------- */}
       {/* PRIMARY TAB NAVIGATION SWITCHER */}
       {/* ---------------------------------------------------- */}
-      <div className="flex items-center gap-2 mt-6 border-b border-slate-200">
+      <div className="flex items-center gap-2 mt-6 border-b border-white/10">
         <button
           onClick={() => setTab('posts')}
           className={`flex items-center gap-2.5 px-5 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
             activeTab === 'posts'
-              ? 'border-indigo-600 text-indigo-600'
-              : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300'
+              ? 'border-indigo-400 text-white'
+              : 'border-transparent text-slate-400 hover:text-white hover:border-white/20'
           }`}
         >
-          <FileText className="w-4 h-4" />
+          <FileText className="w-4 h-4 text-indigo-400" />
           <span>Publications Management</span>
           <span
             className={`px-2 py-0.5 rounded-full text-xs font-mono font-semibold ${
               activeTab === 'posts'
-                ? 'bg-indigo-100 text-indigo-800'
-                : 'bg-slate-100 text-slate-600'
+                ? 'bg-indigo-950/80 text-indigo-300 border border-indigo-700/60 shadow-glow-indigo'
+                : 'bg-slate-900 text-slate-400 border border-white/10'
             }`}
           >
             {posts.length}
@@ -327,17 +327,17 @@ export default function AdminPage({ defaultTab }) {
           onClick={() => setTab('users')}
           className={`flex items-center gap-2.5 px-5 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
             activeTab === 'users'
-              ? 'border-indigo-600 text-indigo-600'
-              : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300'
+              ? 'border-indigo-400 text-white'
+              : 'border-transparent text-slate-400 hover:text-white hover:border-white/20'
           }`}
         >
-          <Users className="w-4 h-4" />
+          <Users className="w-4 h-4 text-indigo-400" />
           <span>User Management</span>
           <span
             className={`px-2 py-0.5 rounded-full text-xs font-mono font-semibold ${
               activeTab === 'users'
-                ? 'bg-indigo-100 text-indigo-800'
-                : 'bg-slate-100 text-slate-600'
+                ? 'bg-indigo-950/80 text-indigo-300 border border-indigo-700/60 shadow-glow-indigo'
+                : 'bg-slate-900 text-slate-400 border border-white/10'
             }`}
           >
             {userStats.totalUsers || users.length}
@@ -346,49 +346,50 @@ export default function AdminPage({ defaultTab }) {
       </div>
 
       {/* ---------------------------------------------------- */}
+      {/* ---------------------------------------------------- */}
       {/* TAB 1: PUBLICATIONS (POSTS) VIEW */}
       {/* ---------------------------------------------------- */}
       {activeTab === 'posts' && (
         <div className="space-y-6 mt-6 animate-in fade-in duration-150">
           {/* Posts KPI Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-card flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100/60">
+            <div className="glass-card p-6 rounded-3xl border border-white/10 shadow-2xl flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-950/70 text-indigo-400 flex items-center justify-center border border-indigo-500/30 shadow-glow-indigo">
                 <FileText className="w-6 h-6" />
               </div>
               <div>
                 <p className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">
                   {adminScope === 'all' ? 'All System Publications' : 'My Publications'}
                 </p>
-                <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-0.5 font-mono">
+                <p className="text-2xl sm:text-3xl font-extrabold text-white mt-0.5 font-mono">
                   {postStats.total}
                 </p>
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-card flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100/60">
+            <div className="glass-card p-6 rounded-3xl border border-white/10 shadow-2xl flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-950/70 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
                 <Globe className="w-6 h-6" />
               </div>
               <div>
                 <p className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">
                   Public Live
                 </p>
-                <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-0.5 font-mono">
+                <p className="text-2xl sm:text-3xl font-extrabold text-white mt-0.5 font-mono">
                   {postStats.public}
                 </p>
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-card flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100/60">
+            <div className="glass-card p-6 rounded-3xl border border-white/10 shadow-2xl flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-amber-950/70 text-amber-400 flex items-center justify-center border border-amber-500/30">
                 <Lock className="w-6 h-6" />
               </div>
               <div>
                 <p className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">
                   Private Drafts
                 </p>
-                <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-0.5 font-mono">
+                <p className="text-2xl sm:text-3xl font-extrabold text-white mt-0.5 font-mono">
                   {postStats.private}
                 </p>
               </div>
@@ -396,9 +397,9 @@ export default function AdminPage({ defaultTab }) {
           </div>
 
           {/* Posts Filter Bar */}
-          <div className="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-card flex flex-col md:flex-row gap-4 justify-between items-center">
+          <div className="glass-panel p-4 rounded-3xl border border-white/10 shadow-2xl flex flex-col md:flex-row gap-4 justify-between items-center">
             {/* Scope Toggle: All Posts vs My Posts */}
-            <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-2xl w-full md:w-auto">
+            <div className="flex items-center gap-2 bg-slate-950/80 p-1 rounded-2xl w-full md:w-auto border border-white/10">
               <button
                 onClick={() => {
                   setAdminScope('all');
@@ -406,8 +407,8 @@ export default function AdminPage({ defaultTab }) {
                 }}
                 className={`flex-1 md:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   adminScope === 'all'
-                    ? 'bg-white text-indigo-600 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white/10 text-white shadow-xs border border-white/15'
+                    : 'text-slate-400 hover:text-white'
                 }`}
               >
                 All System Posts
@@ -419,8 +420,8 @@ export default function AdminPage({ defaultTab }) {
                 }}
                 className={`flex-1 md:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   adminScope === 'mine'
-                    ? 'bg-white text-indigo-600 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white/10 text-white shadow-xs border border-white/15'
+                    : 'text-slate-400 hover:text-white'
                 }`}
               >
                 My Posts Only
@@ -436,7 +437,7 @@ export default function AdminPage({ defaultTab }) {
                   value={postsSearch}
                   onChange={(e) => setPostsSearch(e.target.value)}
                   placeholder="Search by title, tag, or author..."
-                  className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 focus:outline-none transition-colors"
+                  className="w-full pl-9 pr-4 py-2 bg-slate-950/80 border border-white/10 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:bg-slate-950 focus:border-indigo-400 focus:outline-none transition-colors"
                 />
               </div>
               <Button
@@ -453,11 +454,11 @@ export default function AdminPage({ defaultTab }) {
           </div>
 
           {/* Posts Data Table */}
-          <div className="bg-white rounded-3xl border border-slate-200/80 shadow-card overflow-hidden">
+          <div className="glass-panel rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-100 bg-slate-50/50">
+                  <tr className="border-b border-white/10 bg-slate-950/80">
                     <th className="py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
                       Publication
                     </th>
@@ -475,7 +476,7 @@ export default function AdminPage({ defaultTab }) {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-white/5">
                   {postsLoading ? (
                     Array.from({ length: 5 }).map((_, i) => (
                       <TableRowSkeleton key={i} columns={5} />
@@ -483,8 +484,8 @@ export default function AdminPage({ defaultTab }) {
                   ) : filteredPosts.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="py-16 text-center">
-                        <FileText className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-                        <p className="text-base font-bold text-slate-800">No publications found</p>
+                        <FileText className="w-10 h-10 text-slate-500 mx-auto mb-3" />
+                        <p className="text-base font-bold text-white">No publications found</p>
                         <p className="text-xs text-slate-400 mt-1">
                           {postsSearch
                             ? 'No posts matched your search filters.'
@@ -498,11 +499,11 @@ export default function AdminPage({ defaultTab }) {
                       const myId = currentAdmin?._id || currentAdmin?.id;
                       const isOwner = Boolean(authorId && myId && authorId.toString() === myId.toString());
                       return (
-                        <tr key={post._id} className="hover:bg-slate-50/80 transition-colors group">
+                        <tr key={post._id} className="hover:bg-white/[0.04] transition-colors group">
                           <td className="py-4 px-6 max-w-md">
                             <Link
                               to={`/posts/${post._id}`}
-                              className="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1 text-sm"
+                              className="font-bold text-white group-hover:text-indigo-300 transition-colors line-clamp-1 text-sm"
                             >
                               {post.title}
                             </Link>
@@ -518,11 +519,11 @@ export default function AdminPage({ defaultTab }) {
                                 size="sm"
                               />
                               <div>
-                                <span className="text-xs font-bold text-slate-800 block truncate max-w-[140px]">
+                                <span className="text-xs font-bold text-slate-200 block truncate max-w-[140px]">
                                   {post.author?.displayName || 'Unknown'}
                                 </span>
                                 {isOwner && (
-                                  <span className="text-[10px] font-mono text-indigo-600 font-bold">
+                                  <span className="text-[10px] font-mono text-indigo-400 font-bold">
                                     (You)
                                   </span>
                                 )}
@@ -530,32 +531,32 @@ export default function AdminPage({ defaultTab }) {
                             </div>
                           </td>
                           <td className="py-4 px-6">
-                            <Badge variant={post.status === 'public' ? 'success' : 'default'} size="sm">
+                            <Badge variant={post.status === 'public' ? 'public' : 'private'} size="sm">
                               {post.status === 'public' ? 'Public Live' : 'Private Draft'}
                             </Badge>
                           </td>
-                          <td className="py-4 px-6 text-xs text-slate-500 font-mono">
+                          <td className="py-4 px-6 text-xs text-slate-400 font-mono">
                             {formatDate(post.createdAt)}
                           </td>
                           <td className="py-4 px-6 text-right">
                             <div className="flex items-center justify-end gap-1.5">
                               <Link
                                 to={`/posts/${post._id}`}
-                                className="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors"
+                                className="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
                                 title="View Publication"
                               >
                                 <ExternalLink className="w-4 h-4" />
                               </Link>
                               <Link
                                 to={`/posts/edit/${post._id}`}
-                                className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                className="p-1.5 text-slate-400 hover:text-indigo-300 hover:bg-white/10 rounded-lg transition-colors"
                                 title="Edit Publication (Admin Override)"
                               >
                                 <Edit3 className="w-4 h-4" />
                               </Link>
                               <button
                                 onClick={() => setPostToDelete(post)}
-                                className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                                className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-950/30 rounded-lg transition-colors cursor-pointer"
                                 title="Delete Publication"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -574,63 +575,64 @@ export default function AdminPage({ defaultTab }) {
       )}
 
       {/* ---------------------------------------------------- */}
+      {/* ---------------------------------------------------- */}
       {/* TAB 2: USER MANAGEMENT VIEW */}
       {/* ---------------------------------------------------- */}
       {activeTab === 'users' && (
         <div className="space-y-6 mt-6 animate-in fade-in duration-150">
           {/* User KPI Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
-            <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-card flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100/60">
+            <div className="glass-card p-6 rounded-3xl border border-white/10 shadow-2xl flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-950/70 text-indigo-400 flex items-center justify-center border border-indigo-500/30 shadow-glow-indigo">
                 <Users className="w-6 h-6" />
               </div>
               <div>
                 <p className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">
                   Total Users
                 </p>
-                <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-0.5 font-mono">
+                <p className="text-2xl sm:text-3xl font-extrabold text-white mt-0.5 font-mono">
                   {userStats.totalUsers}
                 </p>
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-card flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100/60">
+            <div className="glass-card p-6 rounded-3xl border border-white/10 shadow-2xl flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-950/70 text-indigo-400 flex items-center justify-center border border-indigo-500/30">
                 <ShieldCheck className="w-6 h-6" />
               </div>
               <div>
                 <p className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">
                   Active Admins
                 </p>
-                <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-0.5 font-mono">
+                <p className="text-2xl sm:text-3xl font-extrabold text-white mt-0.5 font-mono">
                   {userStats.adminCount}
                 </p>
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-card flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100/60">
+            <div className="glass-card p-6 rounded-3xl border border-white/10 shadow-2xl flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-950/70 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
                 <Users className="w-6 h-6" />
               </div>
               <div>
                 <p className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">
                   Standard Users
                 </p>
-                <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-0.5 font-mono">
+                <p className="text-2xl sm:text-3xl font-extrabold text-white mt-0.5 font-mono">
                   {userStats.userCount}
                 </p>
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-card flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100/60">
+            <div className="glass-card p-6 rounded-3xl border border-white/10 shadow-2xl flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-amber-950/70 text-amber-400 flex items-center justify-center border border-amber-500/30">
                 <AlertTriangle className="w-6 h-6" />
               </div>
               <div>
                 <p className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">
                   Suspended Accounts
                 </p>
-                <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-0.5 font-mono">
+                <p className="text-2xl sm:text-3xl font-extrabold text-white mt-0.5 font-mono">
                   {suspendedUsersCount}
                 </p>
               </div>
@@ -638,9 +640,9 @@ export default function AdminPage({ defaultTab }) {
           </div>
 
           {/* User Filters & Search */}
-          <div className="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-card flex flex-col md:flex-row gap-4 justify-between items-center">
+          <div className="glass-panel p-4 rounded-3xl border border-white/10 shadow-2xl flex flex-col md:flex-row gap-4 justify-between items-center">
             {/* Role Filter Pills */}
-            <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-2xl w-full md:w-auto overflow-x-auto">
+            <div className="flex items-center gap-2 bg-slate-950/80 p-1 rounded-2xl w-full md:w-auto overflow-x-auto border border-white/10">
               {[
                 { label: 'All Users', val: 'all' },
                 { label: 'Admins', val: 'admin' },
@@ -651,8 +653,8 @@ export default function AdminPage({ defaultTab }) {
                   onClick={() => setRoleFilter(tab.val)}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                     roleFilter === tab.val
-                      ? 'bg-white text-indigo-600 shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
+                      ? 'bg-white/10 text-white shadow-xs border border-white/15'
+                      : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   {tab.label}
@@ -669,7 +671,7 @@ export default function AdminPage({ defaultTab }) {
                   value={usersSearch}
                   onChange={(e) => setUsersSearch(e.target.value)}
                   placeholder="Search by name or email..."
-                  className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 focus:outline-none transition-colors"
+                  className="w-full pl-9 pr-4 py-2 bg-slate-950/80 border border-white/10 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:bg-slate-950 focus:border-indigo-400 focus:outline-none transition-colors"
                 />
               </div>
               <Button
@@ -686,11 +688,11 @@ export default function AdminPage({ defaultTab }) {
           </div>
 
           {/* User Data Table */}
-          <div className="bg-white rounded-3xl border border-slate-200/80 shadow-card overflow-hidden">
+          <div className="glass-panel rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-100 bg-slate-50/50">
+                  <tr className="border-b border-white/10 bg-slate-950/80">
                     <th className="py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
                       User Profile
                     </th>
@@ -711,7 +713,7 @@ export default function AdminPage({ defaultTab }) {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-white/5">
                   {usersLoading ? (
                     Array.from({ length: 5 }).map((_, i) => (
                       <TableRowSkeleton key={i} columns={6} />
@@ -719,8 +721,8 @@ export default function AdminPage({ defaultTab }) {
                   ) : filteredUsers.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="py-16 text-center">
-                        <Users className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-                        <p className="text-base font-bold text-slate-800">No users found</p>
+                        <Users className="w-10 h-10 text-slate-500 mx-auto mb-3" />
+                        <p className="text-base font-bold text-white">No users found</p>
                         <p className="text-xs text-slate-400 mt-1">
                           No registered accounts matched the specified search criteria.
                         </p>
@@ -730,17 +732,17 @@ export default function AdminPage({ defaultTab }) {
                     filteredUsers.map((u) => {
                       const isSelf = u._id === currentAdmin?._id;
                       return (
-                        <tr key={u._id} className="hover:bg-slate-50/80 transition-colors group">
+                        <tr key={u._id} className="hover:bg-white/[0.04] transition-colors group">
                           <td className="py-4 px-6">
                             <div className="flex items-center gap-3">
                               <Avatar src={u.image} name={u.displayName} size="md" />
                               <div>
                                 <div className="flex items-center gap-2">
-                                  <span className="font-bold text-slate-900 text-sm">
+                                  <span className="font-bold text-white text-sm">
                                     {u.displayName}
                                   </span>
                                   {isSelf && (
-                                    <span className="text-[10px] font-mono font-bold bg-indigo-50 text-indigo-700 px-1.5 py-0.2 rounded border border-indigo-200">
+                                    <span className="text-[10px] font-mono font-bold bg-indigo-950/80 text-indigo-300 px-1.5 py-0.5 rounded border border-indigo-700/60">
                                       YOU
                                     </span>
                                   )}
@@ -755,8 +757,8 @@ export default function AdminPage({ defaultTab }) {
                             <span
                               className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-mono font-bold ${
                                 u.role === 'admin'
-                                  ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
-                                  : 'bg-slate-100 text-slate-700 border border-slate-200'
+                                  ? 'bg-indigo-950/80 text-indigo-300 border border-indigo-700/60 shadow-glow-indigo'
+                                  : 'bg-slate-900 text-slate-300 border border-white/10'
                               }`}
                             >
                               {u.role === 'admin' ? (
@@ -769,25 +771,25 @@ export default function AdminPage({ defaultTab }) {
                           </td>
                           <td className="py-4 px-6">
                             <Badge
-                              variant={u.status === 'active' ? 'success' : 'danger'}
+                              variant={u.status === 'active' ? 'public' : 'danger'}
                               size="sm"
                             >
                               {u.status === 'active' ? 'Active' : 'Suspended'}
                             </Badge>
                           </td>
                           <td className="py-4 px-6">
-                            <span className="text-xs font-mono font-bold text-slate-800">
+                            <span className="text-xs font-mono font-bold text-white">
                               {u.postsCount || 0}
                             </span>
                           </td>
-                          <td className="py-4 px-6 text-xs text-slate-500 font-mono">
+                          <td className="py-4 px-6 text-xs text-slate-400 font-mono">
                             {formatDate(u.createdAt)}
                           </td>
                           <td className="py-4 px-6 text-right">
                             <div className="flex items-center justify-end gap-1.5">
                               <button
                                 onClick={() => openEditUserModal(u)}
-                                className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer"
+                                className="p-1.5 text-slate-400 hover:text-indigo-300 hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
                                 title="Edit User (Role / Status)"
                               >
                                 <Edit3 className="w-4 h-4" />
@@ -797,8 +799,8 @@ export default function AdminPage({ defaultTab }) {
                                 disabled={isSelf}
                                 className={`p-1.5 rounded-lg transition-colors ${
                                   isSelf
-                                    ? 'text-slate-200 cursor-not-allowed'
-                                    : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50 cursor-pointer'
+                                    ? 'text-slate-600 cursor-not-allowed'
+                                    : 'text-slate-400 hover:text-rose-400 hover:bg-rose-950/30 cursor-pointer'
                                 }`}
                                 title={isSelf ? 'Cannot delete your own account' : 'Delete User'}
                               >
@@ -826,17 +828,17 @@ export default function AdminPage({ defaultTab }) {
         title="Delete Publication"
       >
         <div className="space-y-4">
-          <div className="flex items-center gap-3 p-3 bg-rose-50 border border-rose-200 rounded-2xl text-rose-800 text-sm">
+          <div className="flex items-center gap-3 p-3 bg-rose-950/60 border border-rose-500/30 rounded-2xl text-rose-300 text-sm">
             <AlertTriangle className="w-5 h-5 shrink-0" />
             <span>Are you sure you want to permanently delete this publication?</span>
           </div>
-          <p className="text-sm font-semibold text-slate-800">
+          <p className="text-sm font-semibold text-white">
             "{postToDelete?.title}"
           </p>
-          <p className="text-xs text-slate-500">
-            Authored by: <span className="font-bold">{postToDelete?.author?.displayName || 'Unknown'}</span>
+          <p className="text-xs text-slate-400">
+            Authored by: <span className="font-bold text-slate-200">{postToDelete?.author?.displayName || 'Unknown'}</span>
           </p>
-          <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
+          <div className="flex justify-end gap-3 pt-3 border-t border-white/10">
             <Button variant="secondary" size="md" onClick={() => setPostToDelete(null)}>
               Cancel
             </Button>
@@ -862,7 +864,7 @@ export default function AdminPage({ defaultTab }) {
       >
         <form onSubmit={handleCreateUserSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
               Display Name *
             </label>
             <input
@@ -873,12 +875,12 @@ export default function AdminPage({ defaultTab }) {
                 setUserFormData({ ...userFormData, displayName: e.target.value })
               }
               placeholder="e.g. Jane Doe"
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 transition-colors"
+              className="w-full px-4 py-2.5 bg-slate-950/80 border border-white/15 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:bg-slate-950 focus:border-indigo-400 focus:outline-none transition-colors"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
               Email Address *
             </label>
             <input
@@ -889,13 +891,13 @@ export default function AdminPage({ defaultTab }) {
                 setUserFormData({ ...userFormData, email: e.target.value })
               }
               placeholder="jane@example.com"
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 font-mono transition-colors"
+              className="w-full px-4 py-2.5 bg-slate-950/80 border border-white/15 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:bg-slate-950 focus:border-indigo-400 font-mono focus:outline-none transition-colors"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                 Role
               </label>
               <select
@@ -903,7 +905,7 @@ export default function AdminPage({ defaultTab }) {
                 onChange={(e) =>
                   setUserFormData({ ...userFormData, role: e.target.value })
                 }
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 transition-colors"
+                className="w-full px-4 py-2.5 bg-slate-950 border border-white/15 rounded-xl text-sm text-slate-100 focus:bg-slate-950 focus:border-indigo-400 focus:outline-none transition-colors"
               >
                 <option value="user">Standard User</option>
                 <option value="admin">Super Admin</option>
@@ -911,7 +913,7 @@ export default function AdminPage({ defaultTab }) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                 Status
               </label>
               <select
@@ -919,7 +921,7 @@ export default function AdminPage({ defaultTab }) {
                 onChange={(e) =>
                   setUserFormData({ ...userFormData, status: e.target.value })
                 }
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 transition-colors"
+                className="w-full px-4 py-2.5 bg-slate-950 border border-white/15 rounded-xl text-sm text-slate-100 focus:bg-slate-950 focus:border-indigo-400 focus:outline-none transition-colors"
               >
                 <option value="active">Active</option>
                 <option value="suspended">Suspended</option>
@@ -927,7 +929,7 @@ export default function AdminPage({ defaultTab }) {
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
+          <div className="flex justify-end gap-3 pt-3 border-t border-white/10">
             <Button
               variant="secondary"
               size="md"
@@ -952,7 +954,7 @@ export default function AdminPage({ defaultTab }) {
       >
         <form onSubmit={handleUpdateUserSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
               Display Name
             </label>
             <input
@@ -962,12 +964,12 @@ export default function AdminPage({ defaultTab }) {
               onChange={(e) =>
                 setUserFormData({ ...userFormData, displayName: e.target.value })
               }
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 transition-colors"
+              className="w-full px-4 py-2.5 bg-slate-950/80 border border-white/15 rounded-xl text-sm text-slate-100 focus:bg-slate-950 focus:border-indigo-400 focus:outline-none transition-colors"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
               Email Address
             </label>
             <input
@@ -977,13 +979,13 @@ export default function AdminPage({ defaultTab }) {
               onChange={(e) =>
                 setUserFormData({ ...userFormData, email: e.target.value })
               }
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 font-mono transition-colors"
+              className="w-full px-4 py-2.5 bg-slate-950/80 border border-white/15 rounded-xl text-sm text-slate-100 focus:bg-slate-950 focus:border-indigo-400 font-mono focus:outline-none transition-colors"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                 Role
               </label>
               <select
@@ -992,20 +994,20 @@ export default function AdminPage({ defaultTab }) {
                 onChange={(e) =>
                   setUserFormData({ ...userFormData, role: e.target.value })
                 }
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 transition-colors disabled:opacity-50"
+                className="w-full px-4 py-2.5 bg-slate-950 border border-white/15 rounded-xl text-sm text-slate-100 focus:bg-slate-950 focus:border-indigo-400 focus:outline-none transition-colors disabled:opacity-50"
               >
                 <option value="user">Standard User</option>
                 <option value="admin">Super Admin</option>
               </select>
               {editingUser?._id === currentAdmin?._id && (
-                <p className="text-[10px] text-slate-400 mt-1">
+                <p className="text-[10px] text-slate-500 mt-1 font-mono">
                   Cannot demote your own account.
                 </p>
               )}
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                 Status
               </label>
               <select
@@ -1014,20 +1016,20 @@ export default function AdminPage({ defaultTab }) {
                 onChange={(e) =>
                   setUserFormData({ ...userFormData, status: e.target.value })
                 }
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 transition-colors disabled:opacity-50"
+                className="w-full px-4 py-2.5 bg-slate-950 border border-white/15 rounded-xl text-sm text-slate-100 focus:bg-slate-950 focus:border-indigo-400 focus:outline-none transition-colors disabled:opacity-50"
               >
                 <option value="active">Active</option>
                 <option value="suspended">Suspended</option>
               </select>
               {editingUser?._id === currentAdmin?._id && (
-                <p className="text-[10px] text-slate-400 mt-1">
+                <p className="text-[10px] text-slate-500 mt-1 font-mono">
                   Cannot suspend your own account.
                 </p>
               )}
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
+          <div className="flex justify-end gap-3 pt-3 border-t border-white/10">
             <Button
               variant="secondary"
               size="md"
@@ -1051,17 +1053,17 @@ export default function AdminPage({ defaultTab }) {
         title="Delete User Account"
       >
         <div className="space-y-4">
-          <div className="flex items-center gap-3 p-3 bg-rose-50 border border-rose-200 rounded-2xl text-rose-800 text-sm">
+          <div className="flex items-center gap-3 p-3 bg-rose-950/60 border border-rose-500/30 rounded-2xl text-rose-300 text-sm">
             <AlertTriangle className="w-5 h-5 shrink-0" />
             <span>This action will permanently delete this user and cascade delete all their authored publications.</span>
           </div>
-          <p className="text-sm font-semibold text-slate-800">
+          <p className="text-sm font-semibold text-white">
             "{userToDelete?.displayName}" ({userToDelete?.email})
           </p>
-          <p className="text-xs text-slate-500">
-            Publications to cascade delete: <span className="font-bold text-rose-600">{userToDelete?.postsCount || 0}</span>
+          <p className="text-xs text-slate-400">
+            Publications to cascade delete: <span className="font-bold text-rose-400 font-mono">{userToDelete?.postsCount || 0}</span>
           </p>
-          <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
+          <div className="flex justify-end gap-3 pt-3 border-t border-white/10">
             <Button
               variant="secondary"
               size="md"

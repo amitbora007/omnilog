@@ -7,7 +7,15 @@ This document outlines the software architecture, design principles, component d
 ## 1. High-Level Architecture Overview
 
 OmniLog employs a decoupled client-server architecture:
-- **Client Tier**: A React.js Single Page Application (SPA) built with Vite and Tailwind CSS. Static assets are served via a high-performance Content Delivery Network (Vercel Edge or Render Static).
+- **Client Tier**: A React.js Single Page Application (SPA) built with Vite and Tailwind CSS featuring an obsidian 3D spatial design system:
+  - **Full-Width 2-Column Responsive Architecture**: Eliminates empty side margins via `max-w-7xl` asymmetric grids across Landing, Feed, Post View, Editor, and Console pages.
+  - **Interactive 3D Engine & Parallax**: Native HTML5 Canvas 2D particle physics background with cursor gravity field, celestial z-depth scroll parallax, and battery-saving RAF lifecycle management (`InteractiveBackground.jsx`).
+  - **GPU-Accelerated Parallax Layer**: Zero-dependency component compositing elements with `translate3d` across configurable velocity planes (`ParallaxLayer.jsx`).
+  - **Specular 3D Perspective Tilt**: Hardware-accelerated CSS 3D tilt cards with cursor-following specular spotlight sheen (`Card3D.jsx`).
+  - **Floating Frosted Glass Dock**: Dynamic acrylic navigation dock (`w-full max-w-7xl`) with active route pill indicator (`Navbar.jsx`).
+  - **Editorial Reading & Studio Sidebar System**: Sticky reading companion (real-time progress, read time, share/actions) and authoring studio controls (word counter, visibility toggles, taxonomy).
+  - **Studio Rich Text Editor & Auto-Formatter**: Dark obsidian editor with syntax highlighting, live word/reading counters, dedicated Indent/Outdent controls, and multi-language code snippet auto-formatter (`codeFormatter.js`).
+  - **DOMPurify & Resilient Media**: Client-side sanitization preventing XSS and cross-origin avatar handling (`no-referrer`).
 - **Application Tier**: A stateless Node.js / Express REST API handling authentication, input validation, post processing, tag categorization, and database persistence.
 - **Data Tier**: A managed MongoDB Atlas cluster storing documents for `users` and `posts`.
 
@@ -15,7 +23,12 @@ OmniLog employs a decoupled client-server architecture:
 ┌─────────────────────────────────────────────────────────────┐
 │                       Client Tier                           │
 │               React.js 18/19 SPA (Vite + JSX)               │
-│        - Tailwind CSS for responsive styling                │
+│        - Full-Width 2-Column Responsive System (max-w-7xl)  │
+│        - Tailwind CSS + Obsidian Glassmorphism System       │
+│        - InteractiveBackground (HTML5 Canvas 2D Parallax)   │
+│        - ParallaxLayer (GPU-Composited Multi-Plane Motion)  │
+│        - Card3D (CSS 3D Perspective + Specular Sheen)       │
+│        - Sticky Editorial & Studio Companion Sidebars       │
 │        - Rich Text & Code Editor with Syntax Highlighting   │
 │        - DOMPurify for secure client-side sanitization      │
 │        - Resilient Avatar with no-referrer & error fallback │
@@ -95,11 +108,16 @@ Unlike the legacy application which stored sessions in a MongoDB `sessions` coll
   image: { type: String, default: '' },
   bio: { type: String, default: '', maxLength: 300 },
   role: { type: String, enum: ['user', 'admin'], default: 'user', index: true },
-  status: { type: String, enum: ['active', 'suspended'], default: 'active', index: true },
+  status: { type: String, enum: ['active', 'suspended', 'inactive'], default: 'active', index: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 }
 ```
+
+### Deactivated & Suspended Account Enforcement
+- **OAuth Callback Guard**: In `passport.js` and `authController.js`, users with `status === 'suspended'` or `status === 'inactive'` are denied session tokens/cookies and redirected to `${CLIENT_URL}/?error=${encodeURIComponent('Your account is deactivated, please contact customer support.')}`.
+- **Middleware & Session Guard**: In `middleware/auth.js` (`protect`) and `authController.getMe`, requests from deactivated/suspended accounts return HTTP 403 Forbidden with `{ success: false, error: 'Your account is deactivated, please contact customer support.' }`.
+- **Client Handling**: `AuthContext` captures the URL error query parameter (or 403 API response), purges any stored tokens from `localStorage`, cleans the URL search string via `window.history.replaceState`, and renders both a persistent top notice banner below the navigation dock and an alert toast.
 
 ### Posts Collection (`Post.js`)
 ```javascript
@@ -176,3 +194,21 @@ All responses return standard JSON envelopes:
    - Configured with strict whitelisted client origins (`http://localhost:5173` in development, production client URL on Vercel/Render).
 4. **Rate Limiting**:
    - `express-rate-limit` prevents brute force abuse on auth and mutation routes.
+
+---
+
+## 6. Role-Based Navigation & Dashboard Routing Architecture
+
+OmniLog strictly separates user experiences based on the account role (`user` vs `admin`):
+
+| Persona / Role | Primary Console | Desktop / Mobile Nav Link | Dropdown Menu Item | `/dashboard` Behavior |
+| :--- | :--- | :--- | :--- | :--- |
+| **Administrator** (`role: 'admin'`) | Super Admin Console (`/admin`) | **Admin Dashboard** (`/admin`) | **Admin Dashboard** (`/admin`) | Redirects to `/admin` |
+| **Standard Author** (`role: 'user'`) | Author Cockpit (`/dashboard`) | **Author Dashboard** (`/dashboard`) | **My Dashboard** (`/dashboard`) | Renders Author Console |
+| **Guest / Public** | Landing (`/`) / Feed (`/feed`) | *Hidden* | *Hidden* | Redirects to `/` |
+
+### Key Invariants:
+1. **Zero Dashboard Duplication**: An authenticated admin is never shown both an Author Dashboard and an Admin Dashboard. Only the **Admin Dashboard** is rendered.
+2. **Deterministic Route Guarding**: If an admin types or bookmarks `/dashboard`, `DashboardPage` invokes `<Navigate to="/admin" replace />` alongside an effect-level redirect, immediately forwarding to the Super Admin Console.
+3. **Dynamic Studio Exits**: `EditorPage` and `PostViewPage` evaluate `user?.role === 'admin'` to dynamically direct back buttons and discard triggers to `/admin` for administrators and `/dashboard` for standard authors.
+

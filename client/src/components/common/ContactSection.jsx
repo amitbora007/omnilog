@@ -101,7 +101,7 @@ export default function ContactSection() {
           <div className="lg:col-span-5 space-y-6">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono font-bold uppercase tracking-wider text-indigo-300 bg-indigo-500/10 border border-indigo-500/30 shadow-glow-indigo">
               <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
-              <span>Contact Me</span>
+              <span>Contact Us</span>
             </div>
 
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-[1.15]">

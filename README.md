@@ -45,6 +45,12 @@ cp server/.env.example server/.env
 cp client/.env.example client/.env
 ```
 
+> **Contact Form & Resend API**:
+> - `RESEND_API_KEY`: API key from [resend.com](https://resend.com) (leave as placeholder for dev simulation mode).
+> - `CONTACT_EMAIL_TO`: Destination mailbox where customer inquiries are routed.
+> - `CONTACT_EMAIL_FROM`: Sender identity (e.g. `OmniLog Contact <onboarding@resend.dev>`).
+
+
 ### 4. Start Development Server
 ```bash
 # Runs backend on http://localhost:5000 and frontend on http://localhost:5173

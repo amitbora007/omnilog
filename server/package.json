@@ -11,6 +11,8 @@
     "test": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand --detectOpenHandles --forceExit"
   },
   "dependencies": {
+    "@react-email/components": "^1.0.12",
+    "@react-email/render": "^2.1.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -21,7 +23,9 @@
     "mongoose": "^8.4.0",
     "morgan": "^1.10.0",
     "passport": "^0.7.0",
-    "passport-google-oauth20": "^2.0.0"
+    "passport-google-oauth20": "^2.0.0",
+    "react": "^19.3.1",
+    "resend": "^6.33.0"
   },
   "devDependencies": {
     "jest": "^29.7.0",

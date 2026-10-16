@@ -27,6 +27,13 @@ services:
         sync: false
       - key: GOOGLE_CALLBACK_URL
         sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: CONTACT_EMAIL_TO
+        sync: false
+      - key: CONTACT_EMAIL_FROM
+        sync: false
+
 
   # Frontend Static Site
   - type: web

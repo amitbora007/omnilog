@@ -7,6 +7,7 @@ import GoogleSignInButton from '../components/common/GoogleSignInButton.jsx';
 import PostCard from '../components/post/PostCard.jsx';
 import Card3D from '../components/common/Card3D.jsx';
 import ParallaxLayer from '../components/common/ParallaxLayer.jsx';
+import ContactSection from '../components/common/ContactSection.jsx';
 import { PostCardSkeleton } from '../components/common/Skeleton.jsx';
 import {
   ArrowRight,
@@ -339,6 +340,9 @@ export default function LandingPage() {
           </div>
         )}
       </section>
+
+      {/* Direct Dispatch & Editorial Contact */}
+      <ContactSection />
     </div>
   );
 }

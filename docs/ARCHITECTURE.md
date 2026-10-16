@@ -212,3 +212,53 @@ OmniLog strictly separates user experiences based on the account role (`user` vs
 2. **Deterministic Route Guarding**: If an admin types or bookmarks `/dashboard`, `DashboardPage` invokes `<Navigate to="/admin" replace />` alongside an effect-level redirect, immediately forwarding to the Super Admin Console.
 3. **Dynamic Studio Exits**: `EditorPage` and `PostViewPage` evaluate `user?.role === 'admin'` to dynamically direct back buttons and discard triggers to `/admin` for administrators and `/dashboard` for standard authors.
 
+---
+
+## 7. Editorial & Engineering Contact Pipeline (Resend + React Email)
+
+OmniLog provides a direct communication dispatch on the Landing Page backed by **Resend** and **React Email**:
+
+```
+┌────────────────────────────────┐
+│  LandingPage (<ContactSection>)│
+│  - 3D Spatial Tilt Card        │
+│  - Live Validation & Feedback  │
+└───────────────┬────────────────┘
+                │ POST /api/contact
+                ▼
+┌────────────────────────────────┐
+│  Express API Rate Limiter      │
+│  - max 10 requests / 15 min    │
+└───────────────┬────────────────┘
+                │
+                ▼
+┌────────────────────────────────┐
+│  React Email Renderer          │
+│  - @react-email/components     │
+│  - @react-email/render (HTML)  │
+└───────────────┬────────────────┘
+                │
+                ▼
+┌────────────────────────────────┐
+│  Resend API Client             │
+│  - resend.emails.send(...)     │
+│  - Dev Simulation Fallback     │
+└────────────────────────────────┘
+```
+
+1. **Client Interaction (`ContactSection.jsx`)**:
+   - Integrated into [`LandingPage.jsx`](file:///home/amit.bora/Downloads/ai/Omnilog/client/src/pages/LandingPage.jsx#L344) with full-width responsive layout and hardware-accelerated 3D spatial card tilt.
+   - Real-time client-side validation (name, email format regex, min 10 character message, 2,000 char counter).
+   - Seamless transition to success dispatch card with quick reset button and toast notifications.
+2. **Rate Limiting & Validation (`routes/contact.js`)**:
+   - Protected by `express-rate-limit` (10 dispatches per 15-minute window per IP) to guard against email abuse and spam.
+   - Server-side payload validation for name, valid email address, and message length.
+3. **React Email Compilation (`emails/ContactEmail.js`)**:
+   - Modern HTML email template built using `@react-email/components` (`Html`, `Head`, `Preview`, `Container`, `Section`, `Heading`, `Text`, `Hr`, `Link`).
+   - Compliant with strict email client CSS rendering constraints while maintaining OmniLog's dark obsidian technical aesthetic.
+   - Compiled to production HTML string via `@react-email/render` inside Node ESM.
+4. **Resend Delivery & Dev Simulation (`controllers/contactController.js`)**:
+   - When `RESEND_API_KEY` is provided, dispatches authenticated email requests through the official `resend` SDK to the configured destination mailbox (`CONTACT_EMAIL_TO`).
+   - If `RESEND_API_KEY` is omitted or unconfigured during local development, automatically operates in non-blocking simulation mode (`simulated: true`), logging message contents and returning success without interrupting local developers.
+
+

@@ -12,6 +12,7 @@ import { configurePassport } from './config/passport.js';
 import authRoutes from './routes/auth.js';
 import postRoutes from './routes/posts.js';
 import userRoutes from './routes/users.js';
+import contactRoutes from './routes/contact.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 // Load environment variables
@@ -89,6 +90,9 @@ app.use('/posts', postRoutes);
 
 app.use('/api/users', userRoutes);
 app.use('/users', userRoutes);
+
+app.use('/api/contact', contactRoutes);
+app.use('/contact', contactRoutes);
 
 
 // 404 handler for unknown routes

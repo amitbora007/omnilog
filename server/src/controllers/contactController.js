@@ -106,9 +106,10 @@ export const submitContactForm = async (req, res, next) => {
 
     if (error) {
       console.error('❌ Resend API Error:', error);
+      const resendErrMsg = typeof error === 'string' ? error : (error.message || JSON.stringify(error) || 'Failed to dispatch email via Resend.');
       return res.status(500).json({
         success: false,
-        error: error.message || 'Failed to dispatch email via Resend.',
+        error: resendErrMsg,
       });
     }
 
@@ -118,6 +119,10 @@ export const submitContactForm = async (req, res, next) => {
       id: data?.id,
     });
   } catch (err) {
-    next(err);
+    console.error('❌ Contact Controller Exception:', err);
+    return res.status(500).json({
+      success: false,
+      error: err?.message || 'Failed to send message. Please try again later.',
+    });
   }
 };

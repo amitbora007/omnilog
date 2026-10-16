@@ -69,9 +69,11 @@ export default function ContactSection() {
       const res = await contactApi.submitMessage(formData);
       setSubmitted(true);
       setIsSimulated(Boolean(res.simulated));
-      showToast(res.message || 'Message sent successfully!', 'success');
+      const successMsg = typeof res?.message === 'string' ? res.message : 'Message sent successfully!';
+      showToast(successMsg, 'success');
     } catch (err) {
-      const errMsg = err.message || 'Failed to send message. Please try again.';
+      const rawMsg = err?.message || 'Failed to send message. Please try again.';
+      const errMsg = typeof rawMsg === 'string' ? rawMsg : JSON.stringify(rawMsg);
       setError(errMsg);
       showToast(errMsg, 'error');
     } finally {

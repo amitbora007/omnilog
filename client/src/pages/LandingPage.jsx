@@ -8,6 +8,7 @@ import PostCard from '../components/post/PostCard.jsx';
 import Card3D from '../components/common/Card3D.jsx';
 import ParallaxLayer from '../components/common/ParallaxLayer.jsx';
 import ContactSection from '../components/common/ContactSection.jsx';
+import HeroShowcase from '../components/landing/HeroShowcase.jsx';
 import { PostCardSkeleton } from '../components/common/Skeleton.jsx';
 import {
   ArrowRight,
@@ -16,64 +17,11 @@ import {
   Terminal,
   Sparkles,
   BookOpen,
-  Copy,
-  Check,
   Layers,
   Zap,
   ChevronDown,
   Loader2,
 } from 'lucide-react';
-
-const CODE_SNIPPETS = {
-  js: {
-    filename: 'raft-consensus.js',
-    lang: 'JavaScript • Raft Quorum',
-    code: `async function replicateLogEntries(cluster, logEntry) {
-  // Broadcast proposed state entry to quorum nodes
-  const quorum = Math.floor(cluster.nodes.length / 2) + 1;
-  const acks = await Promise.allSettled(cluster.broadcast(logEntry));
-
-  const committed = acks.filter(r => r.status === 'fulfilled').length >= quorum;
-  if (!committed) throw new ConsensusError('Quorum acknowledge timeout');
-
-  await cluster.commit(logEntry.index);
-  return { committed: true, index: logEntry.index };
-}`,
-  },
-  rs: {
-    filename: 'distributed_queue.rs',
-    lang: 'Rust • Lock-free Ring',
-    code: `pub struct RingBuffer<T, const CAP: usize> {
-    head: AtomicUsize,
-    tail: AtomicUsize,
-    buffer: [UnsafeCell<MaybeUninit<T>>; CAP],
-}
-
-impl<T, const CAP: usize> RingBuffer<T, CAP> {
-    pub fn push(&self, value: T) -> Result<(), QueueFull> {
-        let current_tail = self.tail.load(Ordering::Relaxed);
-        let next_tail = (current_tail + 1) % CAP;
-        // Atomic compare-and-swap ensuring zero lock contention
-        self.tail.compare_exchange_weak(current_tail, next_tail, Ordering::Release, Ordering::Relaxed)?;
-        Ok(())
-    }
-}`,
-  },
-  sql: {
-    filename: 'schema.sql',
-    lang: 'PostgreSQL • Partitioned Engine',
-    code: `CREATE TABLE publication_events (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    post_id UUID NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
-    event_type VARCHAR(32) NOT NULL,
-    metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp()
-) PARTITION BY RANGE (created_at);
-
-CREATE INDEX idx_publication_events_stream
-ON publication_events (post_id, created_at DESC);`,
-  },
-};
 
 export default function LandingPage() {
   const { isAuthenticated, loginWithGoogle } = useAuth();
@@ -83,8 +31,6 @@ export default function LandingPage() {
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [hasMore, setHasMore] = useState(false);
-  const [activeSnippetKey, setActiveSnippetKey] = useState('js');
-  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     async function loadInitialFeatured() {
@@ -124,12 +70,6 @@ export default function LandingPage() {
     } finally {
       setLoadingMore(false);
     }
-  };
-
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText(CODE_SNIPPETS[activeSnippetKey].code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -189,69 +129,10 @@ export default function LandingPage() {
               </ParallaxLayer>
             </div>
 
-            {/* Right Column: Interactive 3D Code Hero Terminal */}
+            {/* Right Column: Interactive OmniLog Product Showcase */}
             <div className="lg:col-span-6 w-full">
               <ParallaxLayer speed={0.08} className="w-full">
-                <Card3D maxTilt={6}>
-                  <div className="rounded-3xl bg-slate-950/90 border border-white/15 shadow-2xl backdrop-blur-2xl overflow-hidden text-slate-200">
-                    {/* Window Bar & Tabs */}
-                    <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/10 bg-slate-900/60 text-xs font-mono">
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1.5">
-                          <span className="w-3 h-3 rounded-full bg-rose-500/80 inline-block" />
-                          <span className="w-3 h-3 rounded-full bg-amber-500/80 inline-block" />
-                          <span className="w-3 h-3 rounded-full bg-emerald-500/80 inline-block" />
-                        </div>
-
-                        {/* Language Tabs */}
-                        <div className="flex items-center gap-1 ml-2">
-                          {Object.keys(CODE_SNIPPETS).map((key) => {
-                            const snippet = CODE_SNIPPETS[key];
-                            const active = activeSnippetKey === key;
-                            return (
-                              <button
-                                key={key}
-                                onClick={() => setActiveSnippetKey(key)}
-                                className={`px-2.5 py-1 rounded-lg text-xs font-mono transition-all ${
-                                  active
-                                    ? 'bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 shadow-xs'
-                                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
-                                }`}
-                              >
-                                {snippet.filename}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <span className="text-[11px] text-slate-500 hidden sm:inline">
-                          {CODE_SNIPPETS[activeSnippetKey].lang}
-                        </span>
-                        <button
-                          onClick={handleCopyCode}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
-                          title="Copy code"
-                          aria-label="Copy code to clipboard"
-                        >
-                          {copied ? (
-                            <Check className="w-3.5 h-3.5 text-emerald-400" />
-                          ) : (
-                            <Copy className="w-3.5 h-3.5" />
-                          )}
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Code Window Body */}
-                    <div className="p-5 sm:p-6 overflow-x-auto text-xs sm:text-[13px] font-mono leading-relaxed text-slate-300 max-h-[380px]">
-                      <pre>
-                        <code>{CODE_SNIPPETS[activeSnippetKey].code}</code>
-                      </pre>
-                    </div>
-                  </div>
-                </Card3D>
+                <HeroShowcase />
               </ParallaxLayer>
             </div>
           </div>

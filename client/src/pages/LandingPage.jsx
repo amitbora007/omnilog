@@ -20,6 +20,8 @@ import {
   Check,
   Layers,
   Zap,
+  ChevronDown,
+  Loader2,
 } from 'lucide-react';
 
 const CODE_SNIPPETS = {
@@ -77,22 +79,52 @@ export default function LandingPage() {
   const { isAuthenticated, loginWithGoogle } = useAuth();
   const [featuredPosts, setFeaturedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
   const [activeSnippetKey, setActiveSnippetKey] = useState('js');
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    async function loadFeatured() {
+    async function loadInitialFeatured() {
       try {
-        const res = await postsApi.getPublicPosts({ limit: 6 });
-        setFeaturedPosts(res.data || []);
+        const res = await postsApi.getPublicPosts({ page: 1, limit: 3 });
+        const initial = res.data || [];
+        setFeaturedPosts(initial);
+        const total = res.total || 0;
+        setTotalCount(total);
+        setHasMore(initial.length < total);
       } catch (err) {
         console.error('Failed to load featured posts:', err);
       } finally {
         setLoading(false);
       }
     }
-    loadFeatured();
+    loadInitialFeatured();
   }, []);
+
+  const handleLoadMore = async () => {
+    if (loadingMore || !hasMore) return;
+    setLoadingMore(true);
+    try {
+      const nextPage = page + 1;
+      const res = await postsApi.getPublicPosts({ page: nextPage, limit: 3 });
+      const newItems = res.data || [];
+      setFeaturedPosts((prev) => {
+        const existingIds = new Set(prev.map((p) => p._id));
+        const filtered = newItems.filter((p) => !existingIds.has(p._id));
+        const combined = [...prev, ...filtered];
+        setHasMore(combined.length < (res.total || 0));
+        return combined;
+      });
+      setPage(nextPage);
+    } catch (err) {
+      console.error('Failed to load more posts:', err);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(CODE_SNIPPETS[activeSnippetKey].code);
@@ -285,7 +317,7 @@ export default function LandingPage() {
       </section>
 
       {/* Featured Feed Preview */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+      <section id="publications" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div>
             <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-wider text-indigo-400 mb-1">
@@ -295,25 +327,62 @@ export default function LandingPage() {
             <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
               From the Engineering Community
             </h2>
+            {totalCount > 0 && (
+              <p className="text-xs text-slate-400 font-mono mt-1">
+                Displaying <span className="text-indigo-400 font-semibold">{featuredPosts.length}</span> of <span className="text-slate-300 font-semibold">{totalCount}</span> publications
+              </p>
+            )}
           </div>
           <Link to="/feed">
             <Button variant="ghost" size="sm" icon={ArrowRight} iconPosition="right">
-              View All Publications
+              Explore Full Feed
             </Button>
           </Link>
         </div>
 
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 6 }).map((_, i) => (
+            {Array.from({ length: 3 }).map((_, i) => (
               <PostCardSkeleton key={i} />
             ))}
           </div>
         ) : featuredPosts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredPosts.map((post) => (
-              <PostCard key={post._id} post={post} />
-            ))}
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featuredPosts.map((post) => (
+                <PostCard key={post._id} post={post} />
+              ))}
+              {loadingMore &&
+                Array.from({ length: 3 }).map((_, i) => (
+                  <PostCardSkeleton key={`skeleton-load-more-${i}`} />
+                ))}
+            </div>
+
+            {/* Progressive Loading Controls */}
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
+              {hasMore ? (
+                <Button
+                  variant="secondary"
+                  size="md"
+                  onClick={handleLoadMore}
+                  disabled={loadingMore}
+                  icon={loadingMore ? Loader2 : ChevronDown}
+                  iconPosition="right"
+                  className={loadingMore ? 'animate-pulse' : 'shadow-glow-indigo'}
+                >
+                  {loadingMore ? 'Fetching Next Batch...' : `Load More Publications (${totalCount - featuredPosts.length} remaining)`}
+                </Button>
+              ) : (
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-900/80 border border-white/10 text-xs font-mono text-slate-300 shadow-card">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
+                  <span>All {totalCount} recent publications loaded</span>
+                  <span className="text-slate-500">•</span>
+                  <Link to="/feed" className="text-indigo-400 hover:text-indigo-300 font-bold underline underline-offset-2">
+                    Browse all topics in feed &rarr;
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
         ) : (
           <div className="text-center py-20 bg-slate-900/60 rounded-3xl border border-white/10 p-8 shadow-card backdrop-blur-md">

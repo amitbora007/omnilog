@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { postsApi } from '../api/posts.js';
@@ -19,6 +19,10 @@ import {
   Sparkles,
   Cpu,
   ArrowRight,
+  ArrowUp,
+  Infinity,
+  Layers,
+  Loader2,
 } from 'lucide-react';
 
 export default function FeedPage() {
@@ -27,22 +31,21 @@ export default function FeedPage() {
   const currentSearch = searchParams.get('search') || '';
 
   const { isAuthenticated, user } = useAuth();
+  const [viewMode, setViewMode] = useState('infinite'); // 'infinite' | 'paginated'
   const [posts, setPosts] = useState([]);
   const [popularTags, setPopularTags] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState(currentSearch);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const sentinelRef = useRef(null);
 
   useEffect(() => {
     loadPopularTags();
   }, []);
-
-  useEffect(() => {
-    setSearchQuery(currentSearch);
-    loadPosts();
-  }, [currentTag, currentSearch, page]);
 
   const loadPopularTags = async () => {
     try {
@@ -53,27 +56,102 @@ export default function FeedPage() {
     }
   };
 
-  const loadPosts = async () => {
-    setLoading(true);
+  const loadPosts = async (targetPage = 1, isFilterChange = false) => {
+    if (targetPage === 1 || isFilterChange || viewMode === 'paginated') {
+      setLoading(true);
+    } else {
+      setLoadingMore(true);
+    }
+
     try {
       const res = await postsApi.getPublicPosts({
         tag: currentTag,
         search: currentSearch,
-        page,
-        limit: 8,
+        page: targetPage,
+        limit: 6,
       });
-      setPosts(res.data || []);
+
+      const newPosts = res.data || [];
+      if (targetPage === 1 || isFilterChange || viewMode === 'paginated') {
+        setPosts(newPosts);
+      } else {
+        setPosts((prev) => {
+          const map = new Map(prev.map((p) => [p._id, p]));
+          newPosts.forEach((p) => map.set(p._id, p));
+          return Array.from(map.values());
+        });
+      }
       setTotalPages(res.pages || 1);
       setTotalCount(res.total || 0);
     } catch (err) {
       console.error('Failed to load posts:', err);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
-  const handleTagSelect = (tag) => {
+  // Triggered on tag or search change
+  useEffect(() => {
+    setSearchQuery(currentSearch);
     setPage(1);
+    loadPosts(1, true);
+  }, [currentTag, currentSearch]);
+
+  // Triggered on page change (for infinite scroll append or pagination switch)
+  useEffect(() => {
+    if (page > 1) {
+      loadPosts(page, false);
+      if (viewMode === 'paginated') {
+        window.scrollTo({ top: 180, behavior: 'smooth' });
+      }
+    }
+  }, [page]);
+
+  // Infinite Scroll IntersectionObserver
+  useEffect(() => {
+    if (viewMode !== 'infinite') return;
+    if (loading || loadingMore || page >= totalPages) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setPage((p) => p + 1);
+        }
+      },
+      { rootMargin: '250px' }
+    );
+
+    const target = sentinelRef.current;
+    if (target) observer.observe(target);
+
+    return () => {
+      if (target) observer.unobserve(target);
+      observer.disconnect();
+    };
+  }, [viewMode, loading, loadingMore, page, totalPages]);
+
+  // Back to top scroll tracking
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 500) {
+        setShowBackToTop(true);
+      } else {
+        setShowBackToTop(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleViewModeChange = (mode) => {
+    if (mode === viewMode) return;
+    setViewMode(mode);
+    setPage(1);
+    loadPosts(1, true);
+  };
+
+  const handleTagSelect = (tag) => {
     const newParams = new URLSearchParams(searchParams);
     if (tag === 'all') {
       newParams.delete('tag');
@@ -85,7 +163,6 @@ export default function FeedPage() {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    setPage(1);
     const newParams = new URLSearchParams(searchParams);
     if (searchQuery.trim()) {
       newParams.set('search', searchQuery.trim());
@@ -97,7 +174,6 @@ export default function FeedPage() {
 
   const clearSearch = () => {
     setSearchQuery('');
-    setPage(1);
     const newParams = new URLSearchParams(searchParams);
     newParams.delete('search');
     setSearchParams(newParams);
@@ -105,7 +181,6 @@ export default function FeedPage() {
 
   const resetAllFilters = () => {
     setSearchQuery('');
-    setPage(1);
     setSearchParams({});
   };
 
@@ -187,19 +262,51 @@ export default function FeedPage() {
           </div>
 
           {/* Results Meta Header */}
-          {!loading && posts.length > 0 && (
-            <div className="flex items-center justify-between text-xs text-slate-400 font-mono px-1">
-              <span>
-                Showing {posts.length} of {totalCount} {totalCount === 1 ? 'publication' : 'publications'}
-              </span>
-              {(currentTag !== 'all' || currentSearch) && (
+          {!loading && (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-400 font-mono px-1">
+              <div className="flex items-center gap-3">
+                <span>
+                  Showing {posts.length} of {totalCount} {totalCount === 1 ? 'publication' : 'publications'}
+                </span>
+                {(currentTag !== 'all' || currentSearch) && (
+                  <button
+                    onClick={resetAllFilters}
+                    className="text-indigo-400 hover:text-indigo-300 font-bold hover:underline"
+                  >
+                    Reset filters
+                  </button>
+                )}
+              </div>
+
+              {/* View Mode Segmented Switch */}
+              <div className="inline-flex items-center gap-1 p-1 bg-slate-950/80 border border-white/10 rounded-xl shrink-0">
                 <button
-                  onClick={resetAllFilters}
-                  className="text-indigo-400 hover:text-indigo-300 font-bold hover:underline"
+                  type="button"
+                  onClick={() => handleViewModeChange('infinite')}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg transition-all ${
+                    viewMode === 'infinite'
+                      ? 'bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 shadow-xs font-bold'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                  title="Continuous stream as you scroll"
                 >
-                  Reset active filters
+                  <Infinity className="w-3.5 h-3.5" />
+                  <span>Infinite Stream</span>
                 </button>
-              )}
+                <button
+                  type="button"
+                  onClick={() => handleViewModeChange('paginated')}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg transition-all ${
+                    viewMode === 'paginated'
+                      ? 'bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 shadow-xs font-bold'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                  title="Numbered page-by-page browsing"
+                >
+                  <Layers className="w-3.5 h-3.5" />
+                  <span>Paginated</span>
+                </button>
+              </div>
             </div>
           )}
 
@@ -216,11 +323,47 @@ export default function FeedPage() {
                 {posts.map((post) => (
                   <PostCard key={post._id} post={post} />
                 ))}
+                {viewMode === 'infinite' && loadingMore && (
+                  Array.from({ length: 2 }).map((_, i) => (
+                    <PostCardSkeleton key={`skeleton-feed-more-${i}`} />
+                  ))
+                )}
               </div>
 
-              {/* Pagination Controls */}
-              {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-3 pt-6">
+              {/* Infinite Mode Sentinel & Stream States */}
+              {viewMode === 'infinite' && (
+                <div className="pt-2">
+                  {/* Invisible sentinel monitored by IntersectionObserver */}
+                  <div ref={sentinelRef} className="h-6 w-full pointer-events-none" />
+
+                  {loadingMore ? (
+                    <div className="py-4 flex items-center justify-center gap-2 text-xs font-mono text-slate-400">
+                      <div className="w-4 h-4 rounded-full border-2 border-indigo-500/20 border-t-indigo-400 animate-spin" />
+                      <span>Streaming next publications...</span>
+                    </div>
+                  ) : page >= totalPages ? (
+                    <div className="py-6 border-t border-white/10 text-center text-xs font-mono text-slate-400 flex items-center justify-center gap-2">
+                      <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>End of technical stream ({totalCount} total publications)</span>
+                    </div>
+                  ) : (
+                    <div className="pt-2 text-center">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => setPage((p) => p + 1)}
+                        icon={Loader2}
+                      >
+                        Load More Publications
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Paginated Mode Controls */}
+              {viewMode === 'paginated' && totalPages > 1 && (
+                <div className="flex items-center justify-center gap-3 pt-6 border-t border-white/10">
                   <button
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page === 1}
@@ -369,6 +512,18 @@ export default function FeedPage() {
           </div>
         </div>
       </div>
+
+      {/* Floating Back to Top Button */}
+      {showBackToTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="fixed bottom-6 right-6 z-40 p-3 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white shadow-glow-indigo border border-indigo-400/40 backdrop-blur-xl transition-all active:scale-90"
+          aria-label="Scroll back to top"
+          title="Back to top"
+        >
+          <ArrowUp className="w-5 h-5" />
+        </button>
+      )}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import Post from '../models/Post.js';
+import { escapeRegex, cleanString } from '../utils/helpers.js';
 
 /**
  * @desc    Get all users with pagination, filtering, search, and post stats
@@ -14,19 +15,22 @@ export const getUsers = async (req, res, next) => {
 
     const query = {};
 
-    // Role filter
-    if (req.query.role && req.query.role.toLowerCase() !== 'all') {
-      query.role = req.query.role.toLowerCase();
+    // Role filter with type guard
+    const rawRole = cleanString(req.query.role, '', 30);
+    if (rawRole && rawRole.toLowerCase() !== 'all') {
+      query.role = rawRole.toLowerCase();
     }
 
-    // Status filter
-    if (req.query.status && req.query.status.toLowerCase() !== 'all') {
-      query.status = req.query.status.toLowerCase();
+    // Status filter with type guard
+    const rawStatus = cleanString(req.query.status, '', 30);
+    if (rawStatus && rawStatus.toLowerCase() !== 'all') {
+      query.status = rawStatus.toLowerCase();
     }
 
-    // Search filter across name or email
-    if (req.query.search && req.query.search.trim()) {
-      const searchRegex = new RegExp(req.query.search.trim(), 'i');
+    // Search filter across name or email with ReDoS guard
+    const rawSearch = cleanString(req.query.search, '', 100);
+    if (rawSearch) {
+      const searchRegex = new RegExp(escapeRegex(rawSearch), 'i');
       query.$or = [{ displayName: searchRegex }, { email: searchRegex }];
     }
 

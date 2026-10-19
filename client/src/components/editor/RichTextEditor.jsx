@@ -556,10 +556,27 @@ export default function RichTextEditor({
   };
 
   const insertLink = () => {
-    const url = prompt('Enter URL (e.g. https://github.com):');
-    if (url) {
-      executeCommand('createLink', url);
+    const rawUrl = prompt('Enter URL (e.g. https://github.com):');
+    if (!rawUrl) return;
+
+    let cleanUrl = rawUrl.trim();
+    // Disallow dangerous URI schemes (javascript:, data:, vbscript:)
+    if (/^(javascript|data|vbscript):/i.test(cleanUrl)) {
+      alert('Unsafe link protocol detected. Only https://, http://, and mailto: links are permitted.');
+      return;
     }
+
+    const isSafeScheme = /^(https?:\/\/|mailto:)/i.test(cleanUrl);
+    if (!isSafeScheme) {
+      if (/^([a-z0-9-]+\.)+[a-z]{2,}/i.test(cleanUrl)) {
+        cleanUrl = `https://${cleanUrl}`;
+      } else {
+        alert('Invalid URL. Please enter a valid URL (e.g. https://github.com).');
+        return;
+      }
+    }
+
+    executeCommand('createLink', cleanUrl);
   };
 
   // Word count & Reading time estimate

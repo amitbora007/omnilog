@@ -7,6 +7,7 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import mongoose from 'mongoose';
+import rateLimit from 'express-rate-limit';
 
 import connectDB from './config/db.js';
 import { configurePassport } from './config/passport.js';
@@ -44,6 +45,7 @@ app.use(
 // CORS configuration
 const allowedOrigins = [
   process.env.CLIENT_URL,
+  'https://omnilog-one.vercel.app',
   'http://localhost:5173',
   'http://localhost:3000',
   'http://127.0.0.1:5173',
@@ -52,18 +54,33 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, postman)
+      // Allow requests with no origin (like mobile apps, curl, server-to-server) or approved origins
       if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
         callback(null, true);
       } else {
-        callback(new Error(`Origin ${origin} not allowed by CORS`));
+        callback(null, false);
       }
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   })
 );
+
+// Global API rate limiter (300 requests per 15 minutes per IP)
+const globalApiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'Too many requests from this IP address. Please try again after 15 minutes.',
+  },
+  skip: () => process.env.NODE_ENV === 'test',
+});
+
+app.use(['/api', '/posts', '/users', '/auth', '/contact'], globalApiLimiter);
 
 // Body parsers
 app.use(express.json({ limit: '10mb' }));

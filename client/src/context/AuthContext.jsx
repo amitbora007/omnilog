@@ -39,21 +39,32 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    // Check if token or error was passed in query parameter from Google OAuth callback
-    const urlParams = new URLSearchParams(window.location.search);
-    const tokenFromUrl = urlParams.get('token');
-    const errorFromUrl = urlParams.get('error');
+    // Check if token was passed in secure hash fragment (RFC 3986) or query parameter from Google OAuth callback
+    let tokenFromUrl = null;
+    let errorFromUrl = null;
+
+    if (window.location.hash) {
+      const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+      tokenFromUrl = hashParams.get('token');
+      errorFromUrl = hashParams.get('error');
+    }
+
+    if (!tokenFromUrl || !errorFromUrl) {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (!tokenFromUrl) tokenFromUrl = urlParams.get('token');
+      if (!errorFromUrl) errorFromUrl = urlParams.get('error');
+    }
 
     if (errorFromUrl) {
       setAuthError(decodeURIComponent(errorFromUrl));
-      // Clean query parameter from URL without reloading
-      const cleanUrl = window.location.pathname;
-      window.history.replaceState({}, document.title, cleanUrl);
     }
 
     if (tokenFromUrl) {
       localStorage.setItem('omnilog_token', tokenFromUrl);
-      // Clean query parameter from URL without reloading
+    }
+
+    // Immediately clean both query and hash fragments from URL without reloading
+    if (tokenFromUrl || errorFromUrl || window.location.hash) {
       const cleanUrl = window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
     }

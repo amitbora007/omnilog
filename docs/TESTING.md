@@ -27,7 +27,7 @@ OmniLog employs an automated testing strategy designed for rapid feedback and re
 
 ---
 
-## 2. Test Suites Overview (53 Tests Across 6 Suites)
+## 2. Test Suites Overview (56 Tests Across 6 Suites)
 
 ### 1. Health & System Tests (`server/tests/health.test.js`)
 - `GET /api/health`: Asserts that the server returns `HTTP 200` with status `OK`, active database connectivity, and uptime telemetry.
@@ -53,11 +53,12 @@ OmniLog employs an automated testing strategy designed for rapid feedback and re
   - `?scope=mine`: Filters exclusively to posts authored by the admin.
   - `?scope=all` or default: Returns all publications across the entire system.
 
-### 5. Utility Unit Tests (`server/tests/utils.test.js`)
+### 5. Utility & Security Unit Tests (`server/tests/utils.test.js`)
 - **Reading Time Calculation**: Verifies accurate words-per-minute estimation.
 - **Tag Normalization**: Verifies whitespace trimming, lowercase conversion, and duplicate removal.
 - **Excerpt Generation**: Validates clean text extraction without HTML tag leakage.
-- **JWT Helper Utilities**: Verifies token signing, verification, and decoding.
+- **ReDoS Escaping & Type Guard Helpers (`escapeRegex`, `cleanString`)**: Asserts that special regex characters (`()[]*+?^$|`) are escaped and non-string inputs are safely handled.
+- **JWT Helper Utilities & Production Guard**: Verifies token signing and decoding, plus asserts that missing/insecure JWT secrets throw fatal errors in production mode.
 
 ### 6. Contact & Messaging Pipeline Tests (`server/tests/contact.test.js`)
 - **Payload Validation**: Verifies rejection of missing/short names, malformed email formats, and messages shorter than 10 characters.

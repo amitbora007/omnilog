@@ -81,7 +81,9 @@ export default function PostViewPage() {
     }
   };
 
-  const isOwner = user && post && post.author && (user.id === post.author._id || user._id === post.author._id);
+  const authorId = post?.author?._id || (typeof post?.author === 'string' ? post.author : null);
+  const currentUserId = user?._id || user?.id;
+  const isOwner = Boolean(currentUserId && authorId && currentUserId.toString() === authorId.toString());
   const isAdmin = user && user.role === 'admin';
   const canManage = isOwner || isAdmin;
 

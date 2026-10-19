@@ -87,7 +87,7 @@ Represents an article, tutorial, log, or story:
 4. **Pagination & Dual-Mode Stream**: Progressive landing page batching, dual-mode Explore feed (infinite stream vs paginated), and reusable data table pagination across user & post management.
 5. **Full-Stack Performance Engineering**: Modular syntax highlighting (87 kB bundle), Gzip/Deflate compression, in-memory 60s tag caching, lean query projections, and compound indexes.
 6. **Lighthouse Web Vitals & Production Compliance**: 100/100 SEO (`robots.txt` + `sitemap.xml`), 100/100 Best Practices (CSP, COOP, nosniff, CHIPS cookies), 100/100 Accessibility (WCAG AA contrast > 5.5:1, descriptive ARIA), and GPU animation compositing (0 CLS).
-7. **Automated Quality Assurance**: 6 test suites, 53/53 tests passing, zero production vulnerabilities (`npm audit`), and sub-50ms First Contentful Paint.
+7. **CEH VAPT Security Hardening & Zero-Regression QA**: Resolved all 11 security findings (OAuth URL token stripping, anti-CSRF Origin checks, ReDoS regex escaping, type guards, global rate limiting, reverse tabnabbing protection); 6 test suites, **56/56 tests passing**, and zero production vulnerabilities.
 
 ### Future Roadmap
 1. **Phase 2**: Post bookmarking, author follower system, comment threads on public posts.

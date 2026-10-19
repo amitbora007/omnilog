@@ -126,11 +126,19 @@ All primary workflows are accessible from the root `package.json`:
    - **Zero Cumulative Layout Shift (CLS)**: Always reserve vertical space on data containers (`min-h-[580px]`), configure fixed column widths on tabular data (`table-fixed`), and render matching skeleton rows during loading states to prevent layout shifts.
    - **Accessible Contrast & ARIA**: Maintain WCAG AA minimum 4.5:1 text contrast ratio on dark backgrounds (`text-slate-400 font-medium` minimum on dark `#030712` surfaces). Use empty `alt=""` for decorative avatars adjacent to text, and provide distinct `aria-label`s on icon buttons.
    - **Static Assets & SPA Rewrites**: Ensure crawler endpoints (`/robots.txt`, `/sitemap.xml`) are served with direct static routes in hosting configs (`vercel.json`), never falling back to `index.html`.
-9. **Git Commit Guidelines**:
-   - Follow Conventional Commits format:
-     - `feat: add tag filtering to public feed`
-     - `fix: sanitize rich text before rendering`
-     - `perf: optimize highlight.js bundle and lean queries`
-     - `docs: update deployment instructions for Vercel`
-     - `test: add integration test for post deletion`
+9. **Application Security & CEH Standards**:
+   - **ReDoS Prevention**: Always sanitize user input with `escapeRegex()` before passing to `new RegExp()`. Limit search query length to 100 characters.
+   - **Query Parameter Type Guards**: Always extract query parameters using `cleanString()` or explicit type validation. Never assume `req.query.*` is a primitive string.
+   - **CSRF Defense**: All state-changing mutation endpoints (`POST`, `PUT`, `DELETE`, `PATCH`) relying on ambient cookies must verify `Origin` or `Referer` against approved origins.
+   - **Credential & Token Transport**: Never transmit authentication tokens in URL query strings. Use RFC 3986 hash fragments (`#token=`) or `HttpOnly` cookies, and sanitize the browser address bar immediately.
+   - **Production Secrets**: Never rely on static fallback secrets; always throw fatal startup errors if cryptographic keys (`JWT_SECRET`) are unset in production.
+10. **Git Commit Guidelines**:
+    - Follow Conventional Commits format:
+      - `feat: add tag filtering to public feed`
+      - `fix: sanitize rich text before rendering`
+      - `perf: optimize highlight.js bundle and lean queries`
+      - `security: harden search regex and query type guards`
+      - `docs: update deployment instructions for Vercel`
+      - `test: add integration test for post deletion`
+
 

@@ -12,13 +12,12 @@ export const errorHandler = (err, req, res, next) => {
 
   // Mongoose bad ObjectId
   if (err.name === 'CastError') {
-    const message = `Resource not found with id of ${err.value}`;
-    return res.status(404).json({ success: false, error: message });
+    return res.status(404).json({ success: false, error: 'Resource not found' });
   }
 
   // Mongoose duplicate key
   if (err.code === 11000) {
-    const field = Object.keys(err.keyValue)[0];
+    const field = Object.keys(err.keyValue || {})[0] || 'unique';
     const message = `Duplicate value entered for ${field} field`;
     return res.status(400).json({ success: false, error: message });
   }
@@ -29,9 +28,15 @@ export const errorHandler = (err, req, res, next) => {
     return res.status(400).json({ success: false, error: message.join(', ') });
   }
 
-  // Fallback to internal server error
-  res.status(error.statusCode || 500).json({
+  // Fallback to internal server error (mask internal details in production)
+  const statusCode = error.statusCode || 500;
+  const isProduction = process.env.NODE_ENV === 'production';
+  const safeMessage = (isProduction && statusCode === 500)
+    ? 'An unexpected error occurred. Please try again later.'
+    : (error.message || 'Internal Server Error');
+
+  res.status(statusCode).json({
     success: false,
-    error: error.message || 'Internal Server Error',
+    error: safeMessage,
   });
 };

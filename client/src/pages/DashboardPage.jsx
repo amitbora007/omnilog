@@ -278,7 +278,7 @@ export default function DashboardPage() {
             </thead>
             <tbody className="divide-y divide-white/5 text-sm">
               {loading ? (
-                Array.from({ length: pageSize }).map((_, i) => (
+                Array.from({ length: perPage }).map((_, i) => (
                   <TableRowSkeleton key={i} columns={5} />
                 ))
               ) : filteredPosts.length > 0 ? (

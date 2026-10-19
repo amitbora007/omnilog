@@ -1,5 +1,5 @@
 import Post from '../models/Post.js';
-import { calculateReadingTime, generateExcerpt, normalizeTags } from '../utils/helpers.js';
+import { calculateReadingTime, generateExcerpt, normalizeTags, escapeRegex, cleanString } from '../utils/helpers.js';
 
 // In-memory cache for popular tags to reduce aggregation load
 let popularTagsCache = { data: null, expiry: 0 };
@@ -20,14 +20,16 @@ export const getPublicPosts = async (req, res, next) => {
 
     const query = { status: 'public' };
 
-    // Tag filter
-    if (req.query.tag && req.query.tag.trim().toLowerCase() !== 'all') {
-      query.tags = req.query.tag.trim().toLowerCase();
+    // Tag filter with type guard
+    const rawTag = cleanString(req.query.tag, '', 50);
+    if (rawTag && rawTag.toLowerCase() !== 'all') {
+      query.tags = rawTag.toLowerCase();
     }
 
-    // Search filter
-    if (req.query.search && req.query.search.trim()) {
-      const searchRegex = new RegExp(req.query.search.trim(), 'i');
+    // Search filter with ReDoS and type injection guard
+    const rawSearch = cleanString(req.query.search, '', 100);
+    if (rawSearch) {
+      const searchRegex = new RegExp(escapeRegex(rawSearch), 'i');
       query.$or = [{ title: searchRegex }, { excerpt: searchRegex }, { tags: searchRegex }];
     }
 

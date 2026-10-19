@@ -1,4 +1,4 @@
-import { calculateReadingTime, generateExcerpt, normalizeTags, stripHtml } from '../src/utils/helpers.js';
+import { calculateReadingTime, generateExcerpt, normalizeTags, stripHtml, escapeRegex, cleanString } from '../src/utils/helpers.js';
 import { generateToken, verifyToken } from '../src/utils/jwt.js';
 
 describe('Utility Functions Unit Tests', () => {
@@ -55,6 +55,24 @@ describe('Utility Functions Unit Tests', () => {
     });
   });
 
+  describe('escapeRegex and cleanString Security Helpers', () => {
+    it('should escape regex metacharacters to prevent ReDoS and syntax errors', () => {
+      expect(escapeRegex('(hello)*+[world]?^$')).toBe('\\(hello\\)\\*\\+\\[world\\]\\?\\^\\$');
+      expect(escapeRegex('C++')).toBe('C\\+\\+');
+      expect(escapeRegex('Node.js')).toBe('Node\\.js');
+      expect(escapeRegex('')).toBe('');
+      expect(escapeRegex(null)).toBe('');
+    });
+
+    it('should cleanly extract strings and reject non-string types', () => {
+      expect(cleanString('  Valid Query  ')).toBe('Valid Query');
+      expect(cleanString({ '$ne': 'admin' }, 'all')).toBe('all');
+      expect(cleanString(['array'], 'default')).toBe('default');
+      expect(cleanString(null, 'fallback')).toBe('fallback');
+      expect(cleanString('A'.repeat(300), '', 50).length).toBe(50);
+    });
+  });
+
   describe('JWT Utilities', () => {
     it('should sign and verify valid user tokens', () => {
       const userId = '507f1f77bcf86cd799439011';
@@ -69,5 +87,19 @@ describe('Utility Functions Unit Tests', () => {
     it('should return null for invalid tokens', () => {
       expect(verifyToken('invalid.malformed.token')).toBeNull();
     });
+
+    it('should throw fatal error in production when JWT_SECRET is missing or insecure default', () => {
+      const originalEnv = process.env.NODE_ENV;
+      const originalSecret = process.env.JWT_SECRET;
+
+      process.env.NODE_ENV = 'production';
+      delete process.env.JWT_SECRET;
+
+      expect(() => generateToken('test_user')).toThrow('FATAL: JWT_SECRET');
+
+      process.env.NODE_ENV = originalEnv;
+      process.env.JWT_SECRET = originalSecret;
+    });
   });
 });
+

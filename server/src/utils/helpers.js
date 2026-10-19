@@ -48,3 +48,22 @@ export const normalizeTags = (input) => {
   const unique = [...new Set(cleaned)];
   return unique.length > 0 ? unique : ['general'];
 };
+
+/**
+ * Escapes characters with special meaning in regular expressions
+ * Prevents ReDoS and regex syntax errors
+ */
+export const escapeRegex = (string = '') => {
+  if (typeof string !== 'string') return '';
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').slice(0, 100);
+};
+
+/**
+ * Safely extracts and trims a string parameter with maximum length guard
+ */
+export const cleanString = (val, fallback = '', maxLen = 200) => {
+  if (typeof val !== 'string') return fallback;
+  const trimmed = val.trim();
+  return trimmed ? trimmed.slice(0, maxLen) : fallback;
+};
+

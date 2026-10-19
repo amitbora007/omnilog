@@ -1,5 +1,16 @@
 import DOMPurify from 'dompurify';
 
+// Configure DOMPurify hook to enforce rel="noopener noreferrer" on outbound links to prevent reverse tabnabbing
+DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+  if (node.tagName === 'A') {
+    const href = node.getAttribute('href');
+    if (href && (href.startsWith('http://') || href.startsWith('https://') || node.getAttribute('target') === '_blank')) {
+      node.setAttribute('rel', 'noopener noreferrer');
+      node.setAttribute('target', '_blank');
+    }
+  }
+});
+
 /**
  * Sanitizes rich-text HTML string to prevent XSS attacks while preserving
  * formatting, links, and code blocks.
@@ -18,3 +29,4 @@ export const sanitizeHtml = (dirtyHtml = '') => {
     ALLOWED_ATTR: ['href', 'title', 'target', 'rel', 'src', 'alt', 'class', 'style'],
   });
 };
+

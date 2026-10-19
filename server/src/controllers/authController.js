@@ -59,8 +59,8 @@ export const googleCallback = async (req, res) => {
       partitioned: isProduction,
     });
 
-    // Redirect to frontend dashboard with token in query parameter for client storage
-    res.redirect(`${clientUrl}/dashboard?token=${token}`);
+    // Redirect to frontend dashboard with token in secure URL hash fragment (RFC 3986: never sent over network or in Referer headers)
+    res.redirect(`${clientUrl}/dashboard#token=${token}`);
   } catch (error) {
     console.error('Google Callback Error:', error);
     const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';

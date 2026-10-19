@@ -17,6 +17,7 @@ export async function apiRequest(endpoint, options = {}) {
 
   const headers = {
     'Content-Type': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest',
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
   };
@@ -32,7 +33,7 @@ export async function apiRequest(endpoint, options = {}) {
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      if (response.status === 401 || response.status === 403) {
+      if (response.status === 401) {
         localStorage.removeItem('omnilog_token');
       }
       const rawError = data.error || data.message || `Request failed with status ${response.status}`;

@@ -1,7 +1,14 @@
 import jwt from 'jsonwebtoken';
 
 const getJwtSecret = () => {
-  return process.env.JWT_SECRET || 'omnilog_fallback_jwt_secret_key_32chars_min';
+  const secret = process.env.JWT_SECRET;
+  if (!secret || secret === 'omnilog_fallback_jwt_secret_key_32chars_min') {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('FATAL: JWT_SECRET environment variable is missing or set to insecure default in production.');
+    }
+    return 'omnilog_fallback_jwt_secret_key_32chars_min';
+  }
+  return secret;
 };
 
 export const generateToken = (userId) => {

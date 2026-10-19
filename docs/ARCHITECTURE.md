@@ -474,6 +474,28 @@ Following comprehensive Lighthouse auditing across Mobile and Desktop environmen
   - Configured early `<link rel="preconnect">` for the Render API origin and Google Avatar CDN in `client/index.html`.
   - Enforced explicit `width`, `height`, `loading="lazy"`, `decoding="async"`, and `=s64-c` thumbnail downsampling for avatar images.
 
+---
+
+## 13. Threat Modeling & Application Security Architecture (CEH VAPT)
+
+The security architecture of OmniLog is continuously evaluated using the **Certified Ethical Hacker (CEH v12)** and **OWASP Top 10 (2021)** frameworks:
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    OmniLog Security Defense Layers                      │
+├───────────────────┬───────────────────┬───────────────────┬─────────────┤
+│ Perimeter & Edge  │ API & Middleware  │ Business Logic    │ Data Tier   │
+├───────────────────┼───────────────────┼───────────────────┼─────────────┤
+│ • Strict CSP      │ • Rate Limiting   │ • BOLA / IDOR     │ • Parameter-│
+│ • COOP & XFO      │ • Anti-CSRF Origin│   Ownership Guard │   ized Mongo│
+│ • TLS 1.2+ Only   │ • JWT Signature   │ • Self-Demotion   │ • Lean Pro- │
+│ • Nosniff & CHIPS │ • ReDoS Escaping  │   Prevention      │   jections  │
+└───────────────────┴───────────────────┴───────────────────┴─────────────┘
+```
+
+For the comprehensive VAPT vulnerability assessment, CVSS scoring, and complete remediation patches, refer to [`docs/SECURITY_AUDIT.md`](file:///home/amit.bora/Downloads/ai/Omnilog/docs/SECURITY_AUDIT.md).
+
+
 
 
 

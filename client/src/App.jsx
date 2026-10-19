@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { ToastProvider } from './components/common/Toast.jsx';
+import ErrorBoundary from './components/common/ErrorBoundary.jsx';
 import Layout from './components/layout/Layout.jsx';
 import AdminRoute from './components/common/AdminRoute.jsx';
 
@@ -36,8 +37,9 @@ export default function App() {
       <AuthProvider>
         <ToastProvider>
           <Layout>
-            <Suspense fallback={<PageLoader />}>
-              <Routes>
+            <ErrorBoundary>
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/feed" element={<FeedPage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
@@ -72,7 +74,8 @@ export default function App() {
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </Suspense>
-          </Layout>
+          </ErrorBoundary>
+        </Layout>
         </ToastProvider>
       </AuthProvider>
     </BrowserRouter>

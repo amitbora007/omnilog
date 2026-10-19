@@ -35,8 +35,13 @@ export default function InteractiveBackground() {
     // Respect user motion preferences
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Particle pool
-    const particleCount = Math.min(Math.floor((width * height) / 14000), 75);
+    // Detect mobile screens & touch capability
+    let isMobile = width < 768 || ('ontouchstart' in window);
+
+    // Particle pool (lightweight 18 particles on mobile, rich 75 on desktop)
+    const particleCount = isMobile
+      ? Math.min(Math.max(Math.floor((width * height) / 24000), 12), 18)
+      : Math.min(Math.floor((width * height) / 14000), 75);
     const particles = [];
     const mouse = { x: -1000, y: -1000, radius: 160 };
 
@@ -49,8 +54,8 @@ export default function InteractiveBackground() {
         x: Math.random() * width,
         y: Math.random() * height,
         z: Math.random() * 0.8 + 0.2, // 3D depth multiplier
-        vx: (Math.random() - 0.5) * 0.35,
-        vy: (Math.random() - 0.5) * 0.35,
+        vx: (Math.random() - 0.5) * (isMobile ? 0.25 : 0.35),
+        vy: (Math.random() - 0.5) * (isMobile ? 0.25 : 0.35),
         baseRadius: Math.random() * 1.6 + 0.8,
         color: i % 4 === 0 ? '#818cf8' : i % 3 === 0 ? '#38bdf8' : '#c084fc',
       });
@@ -60,6 +65,7 @@ export default function InteractiveBackground() {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       width = window.innerWidth;
       height = window.innerHeight;
+      isMobile = width < 768 || ('ontouchstart' in window);
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);
       canvas.style.width = `${width}px`;
@@ -74,6 +80,7 @@ export default function InteractiveBackground() {
     };
 
     const handleMouseMove = (e) => {
+      if (isMobile) return;
       mouse.x = e.clientX;
       mouse.y = e.clientY;
     };
@@ -110,14 +117,15 @@ export default function InteractiveBackground() {
     const render = () => {
       ctx.clearRect(0, 0, width, height);
 
-      // Render connected lines
+      // Render connected lines (tightened distance threshold on mobile)
+      const baseDistance = isMobile ? 80 : 120;
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          const maxDist = 120 * ((particles[i].z + particles[j].z) / 2);
+          const maxDist = baseDistance * ((particles[i].z + particles[j].z) / 2);
           if (dist < maxDist) {
             const alpha = (1 - dist / maxDist) * 0.18 * ((particles[i].z + particles[j].z) / 2);
             ctx.strokeStyle = `rgba(129, 140, 248, ${alpha})`;
@@ -149,27 +157,33 @@ export default function InteractiveBackground() {
           if (p.y < -20) p.y = height + 20;
           if (p.y > height + 20) p.y = -20;
 
-          // Interactive cursor gravity / repulsion
-          const dx = mouse.x - p.x;
-          const dy = mouse.y - p.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < mouse.radius && dist > 0) {
-            const force = (1 - dist / mouse.radius) * 1.5;
-            p.x -= (dx / dist) * force;
-            p.y -= (dy / dist) * force;
+          // Interactive cursor gravity / repulsion (desktop only)
+          if (!isMobile) {
+            const dx = mouse.x - p.x;
+            const dy = mouse.y - p.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < mouse.radius && dist > 0) {
+              const force = (1 - dist / mouse.radius) * 1.5;
+              p.x -= (dx / dist) * force;
+              p.y -= (dy / dist) * force;
+            }
           }
         }
 
-        // Draw particle with glow
+        // Draw particle (omit expensive shadowBlur on mobile GPU to preserve battery & high FPS)
         const radius = p.baseRadius * p.z;
         ctx.beginPath();
         ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
         ctx.fillStyle = p.color;
-        ctx.globalAlpha = 0.5 * p.z;
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = 6 * p.z;
+        ctx.globalAlpha = (isMobile ? 0.65 : 0.5) * p.z;
+        if (!isMobile) {
+          ctx.shadowColor = p.color;
+          ctx.shadowBlur = 6 * p.z;
+        }
         ctx.fill();
-        ctx.shadowBlur = 0;
+        if (!isMobile) {
+          ctx.shadowBlur = 0;
+        }
         ctx.globalAlpha = 1;
       }
 

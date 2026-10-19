@@ -5,8 +5,9 @@ import { ToastProvider } from './components/common/Toast.jsx';
 import Layout from './components/layout/Layout.jsx';
 import AdminRoute from './components/common/AdminRoute.jsx';
 
-// Dynamic code-split page imports
-const LandingPage = lazy(() => import('./pages/LandingPage.jsx'));
+import LandingPage from './pages/LandingPage.jsx';
+
+// Dynamic code-split page imports for non-critical routes
 const FeedPage = lazy(() => import('./pages/FeedPage.jsx'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage.jsx'));
 const PostViewPage = lazy(() => import('./pages/PostViewPage.jsx'));
@@ -15,9 +16,16 @@ const AdminPage = lazy(() => import('./pages/AdminPage.jsx'));
 
 function PageLoader() {
   return (
-    <div className="min-h-[50vh] flex flex-col items-center justify-center gap-3">
-      <div className="w-8 h-8 rounded-full border-2 border-indigo-500/20 border-t-indigo-400 animate-spin" />
-      <span className="text-xs font-mono text-slate-400">Loading module...</span>
+    <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 px-4">
+      <div className="relative flex items-center justify-center">
+        <div className="w-12 h-12 rounded-2xl bg-indigo-950/70 border border-indigo-500/30 flex items-center justify-center shadow-glow-indigo animate-pulse">
+          <div className="w-5 h-5 rounded-full border-2 border-indigo-500/20 border-t-indigo-400 animate-spin" />
+        </div>
+      </div>
+      <div className="flex flex-col items-center gap-1 text-center">
+        <span className="text-sm font-semibold text-slate-200">Loading module</span>
+        <span className="text-xs font-mono text-slate-500">Preparing interface...</span>
+      </div>
     </div>
   );
 }

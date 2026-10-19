@@ -9,10 +9,102 @@
     <title>OmniLog — Modern Publishing Platform</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+    </noscript>
   </head>
   <body class="bg-[#030712] text-slate-100 antialiased font-sans min-h-screen selection:bg-indigo-500/30 selection:text-indigo-200">
-    <div id="root"></div>
+    <div id="root">
+      <!-- Instant In-HTML App Shell (Sub-50ms First Contentful Paint, eliminates mobile black screen) -->
+      <div id="app-shell" style="min-height: 100vh; background-color: #030712; color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; display: flex; flex-direction: column;">
+        <style>
+          @keyframes omni-pulse {
+            0%, 100% { opacity: 0.4; transform: scale(0.98); }
+            50% { opacity: 0.9; transform: scale(1); }
+          }
+          @keyframes omni-shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+          }
+          @keyframes omni-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+          .omni-shimmer-bar {
+            background: linear-gradient(90deg, rgba(30, 41, 59, 0.4) 0%, rgba(51, 65, 85, 0.6) 50%, rgba(30, 41, 59, 0.4) 100%);
+            background-size: 200% 100%;
+            animation: omni-shimmer 2s infinite ease-in-out;
+            border-radius: 8px;
+          }
+          .omni-nav-action {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+          }
+          @media (min-width: 768px) {
+            .omni-nav-action {
+              width: 130px;
+              height: 36px;
+              border-radius: 12px;
+            }
+          }
+        </style>
+        
+        <!-- Navbar Dock Shell -->
+        <header style="position: sticky; top: 12px; z-index: 40; width: 100%; max-width: 80rem; margin: 0 auto; padding: 0 16px; margin-bottom: 24px;">
+          <div style="background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="width: 36px; height: 36px; border-radius: 12px; background: linear-gradient(135deg, #4f46e5, #818cf8); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="16 18 22 12 16 6"></polyline>
+                  <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+              </div>
+              <div style="display: flex; flex-direction: column;">
+                <span style="font-weight: 800; font-size: 18px; letter-spacing: -0.025em; color: white;">Omni<span style="color: #818cf8;">Log</span></span>
+                <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; font-family: monospace;">Platform 2.0</span>
+              </div>
+            </div>
+            <div class="omni-nav-action omni-shimmer-bar"></div>
+          </div>
+        </header>
+
+        <!-- Main Hero Shell -->
+        <main style="flex: 1; width: 100%; max-width: 80rem; margin: 0 auto; padding: 24px 16px 40px;">
+          <div style="max-width: 680px; text-align: left;">
+            <!-- Release Badge Skeleton -->
+            <div style="display: inline-flex; align-items: center; gap: 10px; padding: 6px 14px; border-radius: 9999px; background: rgba(49, 46, 129, 0.5); border: 1px solid rgba(99, 102, 241, 0.3); margin-bottom: 24px;">
+              <span style="width: 8px; height: 8px; border-radius: 9999px; background: #818cf8; display: inline-block; animation: omni-pulse 2s infinite ease-in-out; box-shadow: 0 0 10px #818cf8;"></span>
+              <span style="font-size: 11px; font-weight: 600; color: #c7d2fe; font-family: monospace;">OmniLog 2.0 • 3D Developer Publishing Engine</span>
+            </div>
+
+            <!-- Title Skeleton -->
+            <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px;">
+              <div style="height: 38px; width: 92%;" class="omni-shimmer-bar"></div>
+              <div style="height: 38px; width: 75%;" class="omni-shimmer-bar"></div>
+            </div>
+
+            <!-- Description Skeleton -->
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px;">
+              <div style="height: 16px; width: 98%;" class="omni-shimmer-bar"></div>
+              <div style="height: 16px; width: 85%;" class="omni-shimmer-bar"></div>
+            </div>
+
+            <!-- Action CTA Button Skeleton & Loading Indicator -->
+            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+              <div style="width: 150px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, rgba(79, 70, 229, 0.6), rgba(99, 102, 241, 0.8)); box-shadow: 0 0 25px rgba(99, 102, 241, 0.25);" class="omni-shimmer-bar"></div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(129, 140, 248, 0.2); border-top-color: #818cf8; animation: omni-spin 0.8s linear infinite;"></div>
+                <span style="font-size: 12px; color: #94a3b8; font-family: monospace;">Loading platform...</span>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

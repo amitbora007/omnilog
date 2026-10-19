@@ -6,6 +6,7 @@ import { postsApi } from '../api/posts.js';
 import Button from '../components/common/Button.jsx';
 import Badge from '../components/common/Badge.jsx';
 import Modal from '../components/common/Modal.jsx';
+import DataTablePagination from '../components/common/DataTablePagination.jsx';
 import { TableRowSkeleton } from '../components/common/Skeleton.jsx';
 import { formatDate } from '../utils/formatters.js';
 import {
@@ -31,6 +32,8 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [tableSearch, setTableSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
   const [postToDelete, setPostToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -98,6 +101,24 @@ export default function DashboardPage() {
       return matchesSearch && matchesStatus;
     });
   }, [posts, tableSearch, statusFilter]);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [tableSearch, statusFilter]);
+
+  // Clamp page within bounds
+  useEffect(() => {
+    const maxPage = Math.max(1, Math.ceil(filteredPosts.length / perPage));
+    if (page > maxPage) {
+      setPage(maxPage);
+    }
+  }, [filteredPosts.length, page, perPage]);
+
+  const paginatedPosts = useMemo(() => {
+    const start = (page - 1) * perPage;
+    return filteredPosts.slice(start, start + perPage);
+  }, [filteredPosts, page, perPage]);
 
   if (authLoading) {
     return (
@@ -259,7 +280,7 @@ export default function DashboardPage() {
               {loading ? (
                 Array.from({ length: 4 }).map((_, i) => <TableRowSkeleton key={i} />)
               ) : filteredPosts.length > 0 ? (
-                filteredPosts.map((post) => (
+                paginatedPosts.map((post) => (
                   <tr key={post._id} className="hover:bg-white/[0.04] transition-colors">
                     <td className="px-6 py-4 font-semibold text-white max-w-sm">
                       <Link
@@ -359,6 +380,22 @@ export default function DashboardPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Author Publications Pagination Footer */}
+        {filteredPosts.length > 0 && (
+          <DataTablePagination
+            currentPage={page}
+            totalItems={filteredPosts.length}
+            pageSize={perPage}
+            pageSizeOptions={[5, 10, 20, 50]}
+            onPageChange={setPage}
+            onPageSizeChange={(newSize) => {
+              setPerPage(newSize);
+              setPage(1);
+            }}
+            itemLabel="publications"
+          />
+        )}
       </div>
 
       {/* Delete Confirmation Modal */}

@@ -8,6 +8,7 @@ import Avatar from '../components/common/Avatar.jsx';
 import Button from '../components/common/Button.jsx';
 import Badge from '../components/common/Badge.jsx';
 import Modal from '../components/common/Modal.jsx';
+import DataTablePagination from '../components/common/DataTablePagination.jsx';
 import { TableRowSkeleton } from '../components/common/Skeleton.jsx';
 import { formatDate } from '../utils/formatters.js';
 import {
@@ -48,6 +49,8 @@ export default function AdminPage({ defaultTab }) {
   const [postsLoading, setPostsLoading] = useState(true);
   const [postsSearch, setPostsSearch] = useState('');
   const [adminScope, setAdminScope] = useState('all'); // 'all' | 'mine'
+  const [postsPage, setPostsPage] = useState(1);
+  const [postsPerPage, setPostsPerPage] = useState(10);
   const [postToDelete, setPostToDelete] = useState(null);
   const [isDeletingPost, setIsDeletingPost] = useState(false);
 
@@ -60,6 +63,8 @@ export default function AdminPage({ defaultTab }) {
   const [usersSearch, setUsersSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [usersPage, setUsersPage] = useState(1);
+  const [usersPerPage, setUsersPerPage] = useState(10);
 
   // User Modals State
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -153,6 +158,24 @@ export default function AdminPage({ defaultTab }) {
     );
   }, [posts, postsSearch, adminScope, currentAdmin]);
 
+  // Reset page when post filters change
+  useEffect(() => {
+    setPostsPage(1);
+  }, [postsSearch, adminScope]);
+
+  // Clamp postsPage within bounds
+  useEffect(() => {
+    const maxPage = Math.max(1, Math.ceil(filteredPosts.length / postsPerPage));
+    if (postsPage > maxPage) {
+      setPostsPage(maxPage);
+    }
+  }, [filteredPosts.length, postsPage, postsPerPage]);
+
+  const paginatedPosts = useMemo(() => {
+    const start = (postsPage - 1) * postsPerPage;
+    return filteredPosts.slice(start, start + postsPerPage);
+  }, [filteredPosts, postsPage, postsPerPage]);
+
   // ----------------------------------------------------
   // COMPUTED USERS & METRICS
   // ----------------------------------------------------
@@ -165,6 +188,24 @@ export default function AdminPage({ defaultTab }) {
         u.email?.toLowerCase().includes(q)
     );
   }, [users, usersSearch]);
+
+  // Reset page when user filters change
+  useEffect(() => {
+    setUsersPage(1);
+  }, [usersSearch, roleFilter, statusFilter]);
+
+  // Clamp usersPage within bounds
+  useEffect(() => {
+    const maxPage = Math.max(1, Math.ceil(filteredUsers.length / usersPerPage));
+    if (usersPage > maxPage) {
+      setUsersPage(maxPage);
+    }
+  }, [filteredUsers.length, usersPage, usersPerPage]);
+
+  const paginatedUsers = useMemo(() => {
+    const start = (usersPage - 1) * usersPerPage;
+    return filteredUsers.slice(start, start + usersPerPage);
+  }, [filteredUsers, usersPage, usersPerPage]);
 
   const suspendedUsersCount = useMemo(() => {
     return users.filter((u) => u.status === 'suspended').length;
@@ -494,7 +535,7 @@ export default function AdminPage({ defaultTab }) {
                       </td>
                     </tr>
                   ) : (
-                    filteredPosts.map((post) => {
+                    paginatedPosts.map((post) => {
                       const authorId = post.author?._id || post.author?.id || post.author;
                       const myId = currentAdmin?._id || currentAdmin?.id;
                       const isOwner = Boolean(authorId && myId && authorId.toString() === myId.toString());
@@ -570,6 +611,22 @@ export default function AdminPage({ defaultTab }) {
                 </tbody>
               </table>
             </div>
+
+            {/* Publications Pagination Footer */}
+            {filteredPosts.length > 0 && (
+              <DataTablePagination
+                currentPage={postsPage}
+                totalItems={filteredPosts.length}
+                pageSize={postsPerPage}
+                pageSizeOptions={[5, 10, 20, 50]}
+                onPageChange={setPostsPage}
+                onPageSizeChange={(newSize) => {
+                  setPostsPerPage(newSize);
+                  setPostsPage(1);
+                }}
+                itemLabel="publications"
+              />
+            )}
           </div>
         </div>
       )}
@@ -729,7 +786,7 @@ export default function AdminPage({ defaultTab }) {
                       </td>
                     </tr>
                   ) : (
-                    filteredUsers.map((u) => {
+                    paginatedUsers.map((u) => {
                       const isSelf = u._id === currentAdmin?._id;
                       return (
                         <tr key={u._id} className="hover:bg-white/[0.04] transition-colors group">
@@ -815,6 +872,22 @@ export default function AdminPage({ defaultTab }) {
                 </tbody>
               </table>
             </div>
+
+            {/* Users Pagination Footer */}
+            {filteredUsers.length > 0 && (
+              <DataTablePagination
+                currentPage={usersPage}
+                totalItems={filteredUsers.length}
+                pageSize={usersPerPage}
+                pageSizeOptions={[5, 10, 20, 50]}
+                onPageChange={setUsersPage}
+                onPageSizeChange={(newSize) => {
+                  setUsersPerPage(newSize);
+                  setUsersPage(1);
+                }}
+                itemLabel="users"
+              />
+            )}
           </div>
         </div>
       )}

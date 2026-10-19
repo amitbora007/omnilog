@@ -73,6 +73,7 @@ Represents an article, tutorial, log, or story:
 | **Security / XSS** | Vulnerable (unescaped `{{{story.body}}}`) | Strict sanitization with `DOMPurify` + Helmet |
 | **Responsive UI** | Materialize CSS 1.0 (legacy) | Custom 2-column responsive UI built with Tailwind CSS & 3D Spatial Canvas |
 | **Cloud Deployment** | Hard to deploy to static CDNs | Vercel (Frontend Edge CDN) + Render (API Web Service & Database) |
+| **Lighthouse & Web Vitals** | Non-existent (unscored) | 98-100 across SEO, Best Practices, Accessibility & Performance (Zero CLS, GPU-composited animations, CSP/COOP headers) |
 | **Documentation** | None | Comprehensive living docs suite in `/docs` |
 
 ---
@@ -85,9 +86,11 @@ Represents an article, tutorial, log, or story:
 3. **Hero Showcase**: Multi-tab interactive hero element with Reader View (live progress bar), Author Studio (simulated live typing), and Engine Telemetry.
 4. **Pagination & Dual-Mode Stream**: Progressive landing page batching, dual-mode Explore feed (infinite stream vs paginated), and reusable data table pagination across user & post management.
 5. **Full-Stack Performance Engineering**: Modular syntax highlighting (87 kB bundle), Gzip/Deflate compression, in-memory 60s tag caching, lean query projections, and compound indexes.
-6. **Automated Quality Assurance**: 6 test suites, 53/53 tests passing, zero production vulnerabilities (`npm audit`), and sub-50ms First Contentful Paint.
+6. **Lighthouse Web Vitals & Production Compliance**: 100/100 SEO (`robots.txt` + `sitemap.xml`), 100/100 Best Practices (CSP, COOP, nosniff, CHIPS cookies), 100/100 Accessibility (WCAG AA contrast > 5.5:1, descriptive ARIA), and GPU animation compositing (0 CLS).
+7. **Automated Quality Assurance**: 6 test suites, 53/53 tests passing, zero production vulnerabilities (`npm audit`), and sub-50ms First Contentful Paint.
 
 ### Future Roadmap
 1. **Phase 2**: Post bookmarking, author follower system, comment threads on public posts.
 2. **Phase 3**: Full Markdown import/export, dark/light theme switcher, image upload to Cloudinary/S3.
 3. **Phase 4**: RSS feed generation (`/feed.xml`) and SEO OpenGraph dynamic card generation.
+

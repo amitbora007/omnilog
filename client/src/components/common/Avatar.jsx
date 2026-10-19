@@ -37,12 +37,28 @@ export default function Avatar({
     '2xl': 'w-16 h-16 text-xl',
   };
 
+  const pixelDimensions = {
+    xs: 24,
+    sm: 28,
+    md: 32,
+    lg: 40,
+    xl: 56,
+    '2xl': 64,
+  };
+
   const rounded = shape === 'circle' ? 'rounded-full' : 'rounded-2xl';
   const initial = name && name.trim() ? name.trim()[0].toUpperCase() : 'U';
   const gradient = getInitialsGradient(name);
+  const dimension = pixelDimensions[size] || 32;
+
+  // Optimize Google user content avatars for thumbnail dimensions
+  let optimizedSrc = src;
+  if (src && typeof src === 'string' && src.includes('googleusercontent.com') && (size === 'xs' || size === 'sm')) {
+    optimizedSrc = src.replace(/=s\d+(-c)?/, '=s64-c');
+  }
 
   // If no source is provided or image loading failed, render initials fallback
-  if (!src || imageError) {
+  if (!optimizedSrc || imageError) {
     return (
       <div
         className={`${sizes[size] || sizes.md} ${rounded} bg-gradient-to-br ${gradient} flex items-center justify-center font-bold font-mono border border-slate-200/80 shrink-0 select-none ${className}`}
@@ -54,10 +70,17 @@ export default function Avatar({
     );
   }
 
+  // Preserve explicit empty string alt="" for decorative avatars, or provide fallback
+  const resolvedAlt = alt !== undefined ? alt : (name ? `${name}'s avatar` : 'Profile image');
+
   return (
     <img
-      src={src}
-      alt={alt || name || 'Profile image'}
+      src={optimizedSrc}
+      alt={resolvedAlt}
+      width={dimension}
+      height={dimension}
+      loading="lazy"
+      decoding="async"
       referrerPolicy="no-referrer"
       onError={() => setImageError(true)}
       className={`${sizes[size] || sizes.md} ${rounded} object-cover border border-slate-200/80 shrink-0 ${className}`}

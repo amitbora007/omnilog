@@ -108,7 +108,7 @@ export default function DataTablePagination({
         {/* Rows per page selector */}
         {onPageSizeChange && (
           <div className="flex items-center gap-1.5 pl-3 border-l border-white/10">
-            <span className="hidden md:inline text-[11px] text-slate-500">Per page:</span>
+            <span className="hidden md:inline text-[11px] text-slate-400 font-medium">Per page:</span>
             <select
               value={pageSize}
               onChange={(e) => {

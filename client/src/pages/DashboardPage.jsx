@@ -208,7 +208,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Publications Table Card */}
-      <div className="glass-panel rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
+      <div className="glass-panel rounded-3xl border border-white/10 shadow-2xl overflow-hidden min-h-[580px] flex flex-col justify-between">
         {/* Table Search & Tab Controls */}
         <div className="p-5 border-b border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-3">
@@ -219,7 +219,7 @@ export default function DashboardPage() {
                 placeholder="Filter by title or tag..."
                 value={tableSearch}
                 onChange={(e) => setTableSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 bg-slate-950/80 border border-white/10 rounded-xl text-xs font-medium text-slate-100 placeholder-slate-500 focus:bg-slate-950 focus:border-indigo-400 focus:outline-none transition-all"
+                className="w-full pl-9 pr-4 py-2 bg-slate-950/80 border border-white/10 rounded-xl text-xs font-medium text-slate-100 placeholder-slate-400 focus:bg-slate-950 focus:border-indigo-400 focus:outline-none transition-all"
               />
             </div>
           </div>
@@ -265,20 +265,22 @@ export default function DashboardPage() {
         </div>
 
         {/* Data Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <div className="overflow-x-auto flex-1">
+          <table className="w-full text-left border-collapse table-fixed min-w-[700px]">
             <thead>
               <tr className="bg-slate-950/80 border-b border-white/10 text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider">
-                <th className="px-6 py-3.5">Title</th>
-                <th className="px-6 py-3.5">Tags</th>
-                <th className="px-6 py-3.5">Status</th>
-                <th className="px-6 py-3.5">Date Created</th>
-                <th className="px-6 py-3.5 text-right">Actions</th>
+                <th className="w-[40%] px-6 py-3.5">Title</th>
+                <th className="w-[22%] px-6 py-3.5">Tags</th>
+                <th className="w-[14%] px-6 py-3.5">Status</th>
+                <th className="w-[12%] px-6 py-3.5">Date Created</th>
+                <th className="w-[12%] px-6 py-3.5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5 text-sm">
               {loading ? (
-                Array.from({ length: 4 }).map((_, i) => <TableRowSkeleton key={i} />)
+                Array.from({ length: pageSize }).map((_, i) => (
+                  <TableRowSkeleton key={i} columns={5} />
+                ))
               ) : filteredPosts.length > 0 ? (
                 paginatedPosts.map((post) => (
                   <tr key={post._id} className="hover:bg-white/[0.04] transition-colors">
@@ -300,7 +302,7 @@ export default function DashboardPage() {
                             </Badge>
                           ))
                         ) : (
-                          <span className="text-xs text-slate-500 font-mono">—</span>
+                          <span className="text-xs text-slate-400 font-mono font-medium">—</span>
                         )}
                       </div>
                     </td>
@@ -317,24 +319,24 @@ export default function DashboardPage() {
                         <Link
                           to={`/posts/${post._id}`}
                           className="p-1.5 text-slate-400 hover:text-indigo-300 hover:bg-white/10 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-indigo-400"
-                          title="View live post"
-                          aria-label="View post"
+                          title={`View publication: ${post.title}`}
+                          aria-label={`View publication: ${post.title}`}
                         >
                           <ExternalLink className="w-4 h-4" />
                         </Link>
                         <Link
                           to={`/posts/edit/${post._id}`}
                           className="p-1.5 text-slate-400 hover:text-indigo-300 hover:bg-white/10 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-indigo-400"
-                          title="Edit post"
-                          aria-label="Edit post"
+                          title={`Edit publication: ${post.title}`}
+                          aria-label={`Edit publication: ${post.title}`}
                         >
                           <Edit3 className="w-4 h-4" />
                         </Link>
                         <button
                           onClick={() => setPostToDelete(post)}
                           className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-950/30 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-rose-400"
-                          title="Delete post"
-                          aria-label="Delete post"
+                          title={`Delete publication: ${post.title}`}
+                          aria-label={`Delete publication: ${post.title}`}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>

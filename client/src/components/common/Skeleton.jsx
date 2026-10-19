@@ -41,26 +41,63 @@ export function PostCardSkeleton() {
   );
 }
 
-export function TableRowSkeleton() {
+export function TableRowSkeleton({ columns = 5 }) {
+  if (columns === 6) {
+    return (
+      <tr className="animate-pulse border-b border-white/5">
+        <td className="px-6 py-4">
+          <div className="flex items-center gap-3">
+            <Skeleton className="w-8 h-8 rounded-full shrink-0" />
+            <div className="space-y-1.5 flex-1">
+              <Skeleton className="h-4 w-32 rounded" />
+              <Skeleton className="h-3 w-44 rounded" />
+            </div>
+          </div>
+        </td>
+        <td className="px-6 py-4">
+          <Skeleton className="h-5 w-16 rounded-full" />
+        </td>
+        <td className="px-6 py-4">
+          <Skeleton className="h-5 w-16 rounded-full" />
+        </td>
+        <td className="px-6 py-4">
+          <Skeleton className="h-4 w-8 rounded font-mono" />
+        </td>
+        <td className="px-6 py-4">
+          <Skeleton className="h-4 w-24 rounded font-mono" />
+        </td>
+        <td className="px-6 py-4 text-right">
+          <div className="inline-flex gap-2 justify-end">
+            <Skeleton className="w-7 h-7 rounded-lg" />
+            <Skeleton className="w-7 h-7 rounded-lg" />
+          </div>
+        </td>
+      </tr>
+    );
+  }
+
   return (
     <tr className="animate-pulse border-b border-white/5">
       <td className="px-6 py-4">
-        <Skeleton className="h-5 w-48 rounded" />
-      </td>
-      <td className="px-6 py-4">
-        <div className="flex gap-1.5">
-          <Skeleton className="h-5 w-14 rounded-full" />
-          <Skeleton className="h-5 w-14 rounded-full" />
+        <div className="space-y-1.5">
+          <Skeleton className="h-4 w-48 rounded" />
+          <Skeleton className="h-3 w-64 rounded" />
         </div>
       </td>
       <td className="px-6 py-4">
-        <Skeleton className="h-5 w-16 rounded-full" />
+        <div className="flex items-center gap-2.5">
+          <Skeleton className="w-7 h-7 rounded-full shrink-0" />
+          <Skeleton className="h-3.5 w-24 rounded" />
+        </div>
       </td>
       <td className="px-6 py-4">
-        <Skeleton className="h-4 w-24 rounded" />
+        <Skeleton className="h-5 w-20 rounded-full" />
+      </td>
+      <td className="px-6 py-4">
+        <Skeleton className="h-4 w-24 rounded font-mono" />
       </td>
       <td className="px-6 py-4 text-right">
-        <div className="inline-flex gap-2">
+        <div className="inline-flex gap-2 justify-end">
           <Skeleton className="w-7 h-7 rounded-lg" />
           <Skeleton className="w-7 h-7 rounded-lg" />
           <Skeleton className="w-7 h-7 rounded-lg" />

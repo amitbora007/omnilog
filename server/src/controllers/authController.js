@@ -56,6 +56,7 @@ export const googleCallback = async (req, res) => {
       httpOnly: true,
       secure: isProduction,
       sameSite: isProduction ? 'none' : 'lax',
+      partitioned: isProduction,
     });
 
     // Redirect to frontend dashboard with token in query parameter for client storage
@@ -79,6 +80,7 @@ export const logout = (req, res) => {
     httpOnly: true,
     secure: isProduction,
     sameSite: isProduction ? 'none' : 'lax',
+    partitioned: isProduction,
   });
 
   res.status(200).json({

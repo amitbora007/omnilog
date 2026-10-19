@@ -61,13 +61,14 @@ function PostCard({ post, isOwner = false, onDelete }) {
               <Avatar
                 src={post.author?.image}
                 name={post.author?.displayName || 'Anonymous'}
+                alt=""
                 size="sm"
               />
               <div className="min-w-0">
                 <p className="text-xs font-semibold text-slate-200 truncate">
                   {post.author?.displayName || 'Anonymous'}
                 </p>
-                <p className="text-[11px] text-slate-500 font-mono">{formatDate(post.createdAt)}</p>
+                <p className="text-[11px] text-slate-400 font-mono font-medium">{formatDate(post.createdAt)}</p>
               </div>
             </div>
 
@@ -78,8 +79,8 @@ function PostCard({ post, isOwner = false, onDelete }) {
                   <Link
                     to={`/posts/edit/${post._id}`}
                     className="p-1.5 text-slate-400 hover:text-indigo-300 hover:bg-white/10 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-indigo-400"
-                    aria-label="Edit post"
-                    title="Edit post"
+                    aria-label={`Edit ${post.title}`}
+                    title={`Edit ${post.title}`}
                   >
                     <Edit3 className="w-3.5 h-3.5" />
                   </Link>
@@ -87,8 +88,8 @@ function PostCard({ post, isOwner = false, onDelete }) {
                     <button
                       onClick={() => onDelete(post)}
                       className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-950/30 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-rose-400"
-                      aria-label="Delete post"
-                      title="Delete post"
+                      aria-label={`Delete ${post.title}`}
+                      title={`Delete ${post.title}`}
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>

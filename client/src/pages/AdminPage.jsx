@@ -495,37 +495,37 @@ export default function AdminPage({ defaultTab }) {
           </div>
 
           {/* Posts Data Table */}
-          <div className="glass-panel rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
+          <div className="glass-panel rounded-3xl border border-white/10 shadow-2xl overflow-hidden min-h-[580px] flex flex-col justify-between">
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+              <table className="w-full text-left border-collapse table-fixed min-w-[700px]">
                 <thead>
                   <tr className="border-b border-white/10 bg-slate-950/80">
-                    <th className="py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                    <th className="w-[40%] py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
                       Publication
                     </th>
-                    <th className="py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                    <th className="w-[22%] py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
                       Author
                     </th>
-                    <th className="py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                    <th className="w-[14%] py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
                       Status
                     </th>
-                    <th className="py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                    <th className="w-[12%] py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
                       Date
                     </th>
-                    <th className="py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400 text-right">
+                    <th className="w-[12%] py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400 text-right">
                       Actions
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {postsLoading ? (
-                    Array.from({ length: 5 }).map((_, i) => (
+                    Array.from({ length: postsPerPage }).map((_, i) => (
                       <TableRowSkeleton key={i} columns={5} />
                     ))
                   ) : filteredPosts.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="py-16 text-center">
-                        <FileText className="w-10 h-10 text-slate-500 mx-auto mb-3" />
+                        <FileText className="w-10 h-10 text-slate-400 mx-auto mb-3" />
                         <p className="text-base font-bold text-white">No publications found</p>
                         <p className="text-xs text-slate-400 mt-1">
                           {postsSearch
@@ -545,6 +545,7 @@ export default function AdminPage({ defaultTab }) {
                             <Link
                               to={`/posts/${post._id}`}
                               className="font-bold text-white group-hover:text-indigo-300 transition-colors line-clamp-1 text-sm"
+                              aria-label={`View publication: ${post.title}`}
                             >
                               {post.title}
                             </Link>
@@ -557,6 +558,7 @@ export default function AdminPage({ defaultTab }) {
                               <Avatar
                                 src={post.author?.image}
                                 name={post.author?.displayName || 'Author'}
+                                alt=""
                                 size="sm"
                               />
                               <div>
@@ -584,7 +586,8 @@ export default function AdminPage({ defaultTab }) {
                               <Link
                                 to={`/posts/${post._id}`}
                                 className="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
-                                title="View Publication"
+                                title={`View publication: ${post.title}`}
+                                aria-label={`View publication: ${post.title}`}
                               >
                                 <ExternalLink className="w-4 h-4" />
                               </Link>
@@ -592,6 +595,7 @@ export default function AdminPage({ defaultTab }) {
                                 to={`/posts/edit/${post._id}`}
                                 className="p-1.5 text-slate-400 hover:text-indigo-300 hover:bg-white/10 rounded-lg transition-colors"
                                 title="Edit Publication (Admin Override)"
+                                aria-label={`Edit publication: ${post.title}`}
                               >
                                 <Edit3 className="w-4 h-4" />
                               </Link>
@@ -599,6 +603,7 @@ export default function AdminPage({ defaultTab }) {
                                 onClick={() => setPostToDelete(post)}
                                 className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-950/30 rounded-lg transition-colors cursor-pointer"
                                 title="Delete Publication"
+                                aria-label={`Delete publication: ${post.title}`}
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -745,40 +750,40 @@ export default function AdminPage({ defaultTab }) {
           </div>
 
           {/* User Data Table */}
-          <div className="glass-panel rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
+          <div className="glass-panel rounded-3xl border border-white/10 shadow-2xl overflow-hidden min-h-[580px] flex flex-col justify-between">
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+              <table className="w-full text-left border-collapse table-fixed min-w-[750px]">
                 <thead>
                   <tr className="border-b border-white/10 bg-slate-950/80">
-                    <th className="py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                    <th className="w-[34%] py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
                       User Profile
                     </th>
-                    <th className="py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                    <th className="w-[14%] py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
                       Role
                     </th>
-                    <th className="py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                    <th className="w-[14%] py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
                       Status
                     </th>
-                    <th className="py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                    <th className="w-[12%] py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
                       Publications
                     </th>
-                    <th className="py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                    <th className="w-[14%] py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
                       Joined
                     </th>
-                    <th className="py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400 text-right">
+                    <th className="w-[12%] py-4 px-6 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400 text-right">
                       Actions
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {usersLoading ? (
-                    Array.from({ length: 5 }).map((_, i) => (
+                    Array.from({ length: usersPerPage }).map((_, i) => (
                       <TableRowSkeleton key={i} columns={6} />
                     ))
                   ) : filteredUsers.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="py-16 text-center">
-                        <Users className="w-10 h-10 text-slate-500 mx-auto mb-3" />
+                        <Users className="w-10 h-10 text-slate-400 mx-auto mb-3" />
                         <p className="text-base font-bold text-white">No users found</p>
                         <p className="text-xs text-slate-400 mt-1">
                           No registered accounts matched the specified search criteria.
@@ -792,7 +797,7 @@ export default function AdminPage({ defaultTab }) {
                         <tr key={u._id} className="hover:bg-white/[0.04] transition-colors group">
                           <td className="py-4 px-6">
                             <div className="flex items-center gap-3">
-                              <Avatar src={u.image} name={u.displayName} size="md" />
+                              <Avatar src={u.image} name={u.displayName} alt="" size="md" />
                               <div>
                                 <div className="flex items-center gap-2">
                                   <span className="font-bold text-white text-sm">
@@ -1073,7 +1078,7 @@ export default function AdminPage({ defaultTab }) {
                 <option value="admin">Super Admin</option>
               </select>
               {editingUser?._id === currentAdmin?._id && (
-                <p className="text-[10px] text-slate-500 mt-1 font-mono">
+                <p className="text-[10px] text-slate-400 mt-1 font-mono font-medium">
                   Cannot demote your own account.
                 </p>
               )}
@@ -1095,7 +1100,7 @@ export default function AdminPage({ defaultTab }) {
                 <option value="suspended">Suspended</option>
               </select>
               {editingUser?._id === currentAdmin?._id && (
-                <p className="text-[10px] text-slate-500 mt-1 font-mono">
+                <p className="text-[10px] text-slate-400 mt-1 font-mono font-medium">
                   Cannot suspend your own account.
                 </p>
               )}

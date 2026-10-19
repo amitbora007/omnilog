@@ -363,7 +363,7 @@ func (s *EventStream) CommitWithQuorum(ctx context.Context) error {
                   <div className="text-xl sm:text-2xl font-extrabold text-emerald-400 font-mono mt-1">
                     &lt; 50ms
                   </div>
-                  <div className="text-[10px] text-slate-500 font-mono mt-0.5">
+                  <div className="text-[10px] text-slate-400 font-mono font-medium mt-0.5">
                     Instant in-HTML app shell
                   </div>
                 </div>
@@ -373,7 +373,7 @@ func (s *EventStream) CommitWithQuorum(ctx context.Context) error {
                   <div className="text-xl sm:text-2xl font-extrabold text-indigo-400 font-mono mt-1">
                     100%
                   </div>
-                  <div className="text-[10px] text-slate-500 font-mono mt-0.5">
+                  <div className="text-[10px] text-slate-400 font-mono font-medium mt-0.5">
                     DOMPurify AST sanitized
                   </div>
                 </div>
@@ -383,7 +383,7 @@ func (s *EventStream) CommitWithQuorum(ctx context.Context) error {
                   <div className="text-xl sm:text-2xl font-extrabold text-cyan-400 font-mono mt-1">
                     28 kB
                   </div>
-                  <div className="text-[10px] text-slate-500 font-mono mt-0.5">
+                  <div className="text-[10px] text-slate-400 font-mono font-medium mt-0.5">
                     Rollup manualChunks split
                   </div>
                 </div>
@@ -393,7 +393,7 @@ func (s *EventStream) CommitWithQuorum(ctx context.Context) error {
                   <div className="text-xl sm:text-2xl font-extrabold text-violet-400 font-mono mt-1">
                     53 / 53
                   </div>
-                  <div className="text-[10px] text-slate-500 font-mono mt-0.5">
+                  <div className="text-[10px] text-slate-400 font-mono font-medium mt-0.5">
                     All test suites passing
                   </div>
                 </div>
@@ -405,7 +405,7 @@ func (s *EventStream) CommitWithQuorum(ctx context.Context) error {
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
                   Hardened Engine 2.0
                 </span>
-                <span className="text-slate-500">Node v22 • Vite • React 18</span>
+                <span className="text-slate-400 font-medium">Node v22 • Vite • React 18</span>
               </div>
             </div>
           )}

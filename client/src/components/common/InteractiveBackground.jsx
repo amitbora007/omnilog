@@ -224,19 +224,25 @@ export default function InteractiveBackground() {
   }, []);
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+    <div
+      className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
+      style={{ contain: 'strict' }}
+    >
       {/* Ambient Radial Lights with Smooth Parallax */}
       <div
         ref={glowRef1}
         className="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/15 rounded-full blur-[120px] pointer-events-none will-change-transform"
+        style={{ transform: 'translate3d(0, 0, 0)' }}
       />
       <div
         ref={glowRef2}
         className="absolute top-1/3 -right-40 w-[30rem] h-[30rem] bg-violet-600/10 rounded-full blur-[140px] pointer-events-none will-change-transform"
+        style={{ transform: 'translate3d(0, 0, 0)' }}
       />
       <div
         ref={glowRef3}
         className="absolute -bottom-40 left-1/3 w-[32rem] h-[32rem] bg-cyan-600/10 rounded-full blur-[140px] pointer-events-none will-change-transform"
+        style={{ transform: 'translate3d(0, 0, 0)' }}
       />
 
       {/* Subtle Grid Lines Overlay */}

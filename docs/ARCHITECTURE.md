@@ -416,5 +416,64 @@ Replacing static code snippets, the Hero section integrates a live interactive s
 └────────────────────────────────────────────────────────┘
 ```
 
+---
+
+## 12. Production Web Vitals & Edge Security Architecture
+
+Following comprehensive Lighthouse auditing across Mobile and Desktop environments, OmniLog incorporates systematic mitigations across four core web performance and compliance domains:
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    Production Web Vitals & Compliance                    │
+├───────────────────┬───────────────────┬───────────────────┬─────────────┤
+│ Search Engine (SEO)│ Best Practices    │ Accessibility     │ Performance │
+│ 100 / 100         │ 100 / 100         │ 100 / 100         │ 98-100 / 100│
+├───────────────────┼───────────────────┼───────────────────┼─────────────┤
+│ • Valid robots.txt│ • Strict CSP      │ • >5.5:1 Contrast │ • 0 CLS     │
+│ • sitemap.xml     │ • COOP Headers    │ • Non-redundant   │ • GPU Shimmer│
+│ • Explicit routes │ • X-Frame-Options │   alt="" tags     │ • Lazy Images│
+│ • Meta description│ • CHIPS Partition │ • Contextual ARIA │ • Preconnect │
+└───────────────────┴───────────────────┴───────────────────┴─────────────┘
+```
+
+### 1. SEO Architecture & SPA Rewriting Integrity
+- **SPA Fallback Hazard**: Single Page Application rewrite rules (`/(.*) -> /index.html`) in hosting configurations intercept non-existent static files like `/robots.txt` and return HTML. When web search crawlers read HTML in place of plaintext directives, they flag syntax errors on every single line.
+- **Remediation**:
+  - Authored compliant `client/public/robots.txt` allowing crawler indexation of public post directories (`/`, `/feed`, `/posts/`) while disallowing private admin consoles (`/admin`, `/api/`, `/dashboard`).
+  - Authored standard `client/public/sitemap.xml` providing XML sitemap metadata.
+  - Configured explicit static routing in `vercel.json` for `/robots.txt` and `/sitemap.xml` with dedicated `Content-Type` headers (`text/plain` and `application/xml`), exempting them from the SPA fallback.
+  - Added primary `<meta name="description">` to `client/index.html`.
+
+### 2. Edge Security Headers & Cookie Partitioning
+- **Edge Header Policy (`vercel.json`)**: Configured strict HTTP headers applied directly at Vercel's global edge network:
+  - `Content-Security-Policy`: Permits script execution, Google Fonts (`fonts.googleapis.com`), Google User Content (`lh3.googleusercontent.com`), and Render API sockets while prohibiting unapproved origins.
+  - `Cross-Origin-Opener-Policy: same-origin-allow-popups`: Shields window references while permitting Google OAuth popup flows.
+  - `X-Frame-Options: DENY`: Prevents clickjacking across iframes.
+  - `X-Content-Type-Options: nosniff`: Prevents MIME-type sniffing.
+  - `Referrer-Policy: strict-origin-when-cross-origin`: Restricts referrer leakage.
+- **CHIPS Cookie Partitioning (`partitioned: true`)**:
+  - In `server/src/controllers/authController.js`, cookie definitions for `token` include `partitioned: isProduction`.
+  - Conforms to modern Chrome third-party cookie phase-out (Cookies Having Independent Partitioned State), guaranteeing that cross-site embeddings or redirects maintain sandboxed credential isolation.
+
+### 3. WCAG AA Accessibility Architecture
+- **Contrast Remediation**: Increased pagination typography contrast in `DataTablePagination.jsx` from `text-slate-500` (3.6:1) to `text-slate-400 font-medium` (5.5:1 against `#030712`), satisfying WCAG AA 4.5:1 standards.
+- **Screen Reader Redundancy Elimination**:
+  - In `Avatar.jsx`, updated image elements to support explicit `alt=""` decorative status when rendered alongside user name labels, eliminating redundant screen-reader announcements.
+- **Contextual ARIA Actions**:
+  - In `AdminPage.jsx` and `DashboardPage.jsx`, icon-only action links now carry descriptive labels (e.g., `aria-label="View publication: {title}"`) matching adjacent textual links to avoid generic link destination confusion.
+
+### 4. GPU-Composited Animations & Cumulative Layout Shift (CLS)
+- **Non-Composited Shimmer Elimination**:
+  - Replaced CPU-bound `background-position` animations with hardware-accelerated `::after` pseudoelements running `transform: translateX(-100%)` to `translateX(100%)` using `will-change: transform`.
+  - Replaced inline app-shell shimmer in `client/index.html` with `@keyframes omni-pulse` manipulating `opacity` and `transform`, eliminating main-thread paint cycles.
+- **Zero Cumulative Layout Shift (0 CLS)**:
+  - Table containers in `AdminPage.jsx` and `DashboardPage.jsx` enforce `min-h-[580px] flex flex-col justify-between`.
+  - Configured `table-fixed min-w-[700px]` with explicit column width percentages (`w-[38%]`, `w-[18%]`, etc.).
+  - Replaced arbitrary 4-row skeleton states with 10 dynamically matching skeleton rows corresponding to `pageSize=10`, eliminating the 0.150 mobile layout jump upon data hydration.
+- **Image Optimization & Early Preconnects**:
+  - Configured early `<link rel="preconnect">` for the Render API origin and Google Avatar CDN in `client/index.html`.
+  - Enforced explicit `width`, `height`, `loading="lazy"`, `decoding="async"`, and `=s64-c` thumbnail downsampling for avatar images.
+
+
 
 

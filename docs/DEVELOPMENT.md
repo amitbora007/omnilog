@@ -121,10 +121,16 @@ All primary workflows are accessible from the root `package.json`:
    - In 3D physics cards and background canvases, mutate styles via DOM refs inside `requestAnimationFrame` instead of saving mouse coordinates in React state.
 7. **Pagination Standards**:
    - Use `DataTablePagination.jsx` for all administrative and user dashboard lists. Provide `page`, `totalPages`, `totalItems`, `itemsPerPage`, and `onPageChange` with dynamic range calculation (`Showing X to Y of Z entries`).
-8. **Git Commit Guidelines**:
+8. **Web Vitals, Accessibility & SEO Standards (Lighthouse Compliance)**:
+   - **GPU Compositor Animations**: Never animate layout/paint-triggering properties (`background-position`, `top`, `left`, `margin`, `width`). Always use GPU-composited properties (`transform: translateX(...)`, `opacity`, `scale`) with `will-change` to avoid main-thread jank.
+   - **Zero Cumulative Layout Shift (CLS)**: Always reserve vertical space on data containers (`min-h-[580px]`), configure fixed column widths on tabular data (`table-fixed`), and render matching skeleton rows during loading states to prevent layout shifts.
+   - **Accessible Contrast & ARIA**: Maintain WCAG AA minimum 4.5:1 text contrast ratio on dark backgrounds (`text-slate-400 font-medium` minimum on dark `#030712` surfaces). Use empty `alt=""` for decorative avatars adjacent to text, and provide distinct `aria-label`s on icon buttons.
+   - **Static Assets & SPA Rewrites**: Ensure crawler endpoints (`/robots.txt`, `/sitemap.xml`) are served with direct static routes in hosting configs (`vercel.json`), never falling back to `index.html`.
+9. **Git Commit Guidelines**:
    - Follow Conventional Commits format:
      - `feat: add tag filtering to public feed`
      - `fix: sanitize rich text before rendering`
      - `perf: optimize highlight.js bundle and lean queries`
      - `docs: update deployment instructions for Vercel`
      - `test: add integration test for post deletion`
+

@@ -103,9 +103,28 @@ All primary workflows are accessible from the root `package.json`:
    - Keep presentational components pure and pass handlers via props.
    - Use custom hooks (`useAuth`, `usePosts`) for state and data fetching.
    - Always sanitize HTML using the `sanitizeHtml()` utility before rendering user-generated content.
-4. **Git Commit Guidelines**:
+4. **Syntax Highlighting & Bundle Isolation**:
+   - Always import the syntax highlighting utility from `client/src/utils/highlight.js`:
+     ```javascript
+     import hljs from '../utils/highlight';
+     ```
+   - **DO NOT** import raw `highlight.js` or `highlight.js/lib/languages/*` directly into React components. Raw imports pull in 190+ languages (950 kB), whereas `utils/highlight.js` registers 16 essential languages and stays tree-shaken inside the 87 kB `vendor-highlight` chunk.
+5. **Database Query Performance & Lean Projections**:
+   - For all bulk list/feed queries (`GET /api/posts`, `GET /api/posts/my-posts`), always omit the heavyweight rich-text `body` field:
+     ```javascript
+     .select('-body -__v')
+     ```
+   - Always chain `.lean()` on read-only bulk queries to bypass Mongoose document hydration overhead and return plain JavaScript objects.
+6. **Frontend Render Optimization & Memoization**:
+   - Wrap high-frequency list items in `React.memo(Component)` (e.g., `PostCard`) to prevent re-renders when parent states (like filter pills or search inputs) update.
+   - Wrap Context Provider values in `useMemo` (`AuthContext`, `ToastContext`) so consumers don't trigger unnecessary re-renders.
+   - In 3D physics cards and background canvases, mutate styles via DOM refs inside `requestAnimationFrame` instead of saving mouse coordinates in React state.
+7. **Pagination Standards**:
+   - Use `DataTablePagination.jsx` for all administrative and user dashboard lists. Provide `page`, `totalPages`, `totalItems`, `itemsPerPage`, and `onPageChange` with dynamic range calculation (`Showing X to Y of Z entries`).
+8. **Git Commit Guidelines**:
    - Follow Conventional Commits format:
      - `feat: add tag filtering to public feed`
      - `fix: sanitize rich text before rendering`
+     - `perf: optimize highlight.js bundle and lean queries`
      - `docs: update deployment instructions for Vercel`
      - `test: add integration test for post deletion`

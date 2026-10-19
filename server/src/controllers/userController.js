@@ -31,9 +31,14 @@ export const getUsers = async (req, res, next) => {
     }
 
     // Execute queries concurrently in parallel to minimize database latency
+    let userFindQuery = User.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit);
+    if (typeof userFindQuery.lean === 'function') {
+      userFindQuery = userFindQuery.lean();
+    }
+
     const [total, users, postStatsAgg, totalUsers, adminCount] = await Promise.all([
       User.countDocuments(query),
-      User.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
+      userFindQuery,
       Post.aggregate([
         {
           $group: {
@@ -67,7 +72,8 @@ export const getUsers = async (req, res, next) => {
 
     // Attach postStats to each user object
     const usersWithStats = users.map((u) => {
-      const uObj = u.toJSON ? u.toJSON() : u.toObject();
+      const uObj = u.toJSON ? u.toJSON() : (u.toObject ? u.toObject() : { ...u });
+      delete uObj.__v;
       const stats = statsMap.get(u._id.toString()) || { total: 0, public: 0, private: 0 };
       return {
         ...uObj,
@@ -101,7 +107,14 @@ export const getUsers = async (req, res, next) => {
  */
 export const getUserById = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id);
+    let userQuery = User.findById(req.params.id);
+    if (typeof userQuery.select === 'function') {
+      userQuery = userQuery.select('-__v');
+    }
+    if (typeof userQuery.lean === 'function') {
+      userQuery = userQuery.lean();
+    }
+    const user = await userQuery;
 
     if (!user) {
       return res.status(404).json({
@@ -110,7 +123,14 @@ export const getUserById = async (req, res, next) => {
       });
     }
 
-    const posts = await Post.find({ author: user._id }).sort({ createdAt: -1 });
+    let postsQuery = Post.find({ author: user._id }).sort({ createdAt: -1 });
+    if (typeof postsQuery.select === 'function') {
+      postsQuery = postsQuery.select('-body -__v');
+    }
+    if (typeof postsQuery.lean === 'function') {
+      postsQuery = postsQuery.lean();
+    }
+    const posts = await postsQuery;
 
     res.status(200).json({
       success: true,

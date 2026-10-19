@@ -57,6 +57,7 @@ const UserSchema = new mongoose.Schema(
 );
 
 UserSchema.index({ email: 1 });
+UserSchema.index({ role: 1, status: 1, createdAt: -1 });
 
 // Format returned JSON to remove internal mongo fields
 UserSchema.methods.toJSON = function () {

@@ -1,6 +1,12 @@
 import Post from '../models/Post.js';
 import { calculateReadingTime, generateExcerpt, normalizeTags } from '../utils/helpers.js';
 
+// In-memory cache for popular tags to reduce aggregation load
+let popularTagsCache = { data: null, expiry: 0 };
+export const invalidateTagsCache = () => {
+  popularTagsCache = { data: null, expiry: 0 };
+};
+
 /**
  * @desc    Get all public posts with optional tag filtering and search
  * @route   GET /api/posts
@@ -26,11 +32,26 @@ export const getPublicPosts = async (req, res, next) => {
     }
 
     const total = await Post.countDocuments(query);
-    const posts = await Post.find(query)
-      .populate('author', 'displayName firstName lastName image')
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
+    let postQuery = Post.find(query);
+    if (typeof postQuery.select === 'function') {
+      postQuery = postQuery.select('-body -__v');
+    }
+    if (typeof postQuery.populate === 'function') {
+      postQuery = postQuery.populate('author', 'displayName firstName lastName image');
+    }
+    if (typeof postQuery.sort === 'function') {
+      postQuery = postQuery.sort({ createdAt: -1 });
+    }
+    if (typeof postQuery.skip === 'function') {
+      postQuery = postQuery.skip(skip);
+    }
+    if (typeof postQuery.limit === 'function') {
+      postQuery = postQuery.limit(limit);
+    }
+    if (typeof postQuery.lean === 'function') {
+      postQuery = postQuery.lean();
+    }
+    const posts = await postQuery;
 
     res.status(200).json({
       success: true,
@@ -52,7 +73,11 @@ export const getPublicPosts = async (req, res, next) => {
  */
 export const getPostById = async (req, res, next) => {
   try {
-    const post = await Post.findById(req.params.id).populate('author', 'displayName firstName lastName image bio');
+    let postQuery = Post.findById(req.params.id);
+    if (typeof postQuery.populate === 'function') {
+      postQuery = postQuery.populate('author', 'displayName firstName lastName image bio');
+    }
+    const post = await postQuery;
 
     if (!post) {
       return res.status(404).json({
@@ -63,7 +88,8 @@ export const getPostById = async (req, res, next) => {
 
     // If private, only the author or super admin can access
     if (post.status === 'private') {
-      const isOwner = req.user && req.user._id.toString() === post.author._id.toString();
+      const authorId = post.author?._id ? post.author._id.toString() : (post.author ? post.author.toString() : '');
+      const isOwner = req.user && req.user._id.toString() === authorId;
       const isAdmin = req.user && req.user.role === 'admin';
       if (!isOwner && !isAdmin) {
         return res.status(403).json({
@@ -106,6 +132,7 @@ export const createPost = async (req, res, next) => {
     });
 
     await post.populate('author', 'displayName firstName lastName image');
+    invalidateTagsCache();
 
     res.status(201).json({
       success: true,
@@ -157,6 +184,7 @@ export const updatePost = async (req, res, next) => {
 
     await post.save();
     await post.populate('author', 'displayName firstName lastName image');
+    invalidateTagsCache();
 
     res.status(200).json({
       success: true,
@@ -200,6 +228,7 @@ export const deletePost = async (req, res, next) => {
     } else {
       await Post.findByIdAndDelete(req.params.id);
     }
+    invalidateTagsCache();
 
     res.status(200).json({
       success: true,
@@ -221,9 +250,17 @@ export const getMyPosts = async (req, res, next) => {
     const isAdmin = req.user && req.user.role === 'admin';
     const filter = isAdmin && req.query.scope !== 'mine' ? {} : { author: req.user._id };
 
-    const posts = await Post.find(filter)
-      .sort({ createdAt: -1 })
-      .populate('author', 'displayName firstName lastName image');
+    let query = Post.find(filter).sort({ createdAt: -1 });
+    if (typeof query.select === 'function') {
+      query = query.select('-body -__v');
+    }
+    if (typeof query.populate === 'function') {
+      query = query.populate('author', 'displayName firstName lastName image');
+    }
+    if (typeof query.lean === 'function') {
+      query = query.lean();
+    }
+    const posts = await query;
 
     const totalPosts = posts.length;
     const publicCount = posts.filter((p) => p.status === 'public').length;
@@ -253,9 +290,17 @@ export const getMyPosts = async (req, res, next) => {
  */
 export const getUserPublicPosts = async (req, res, next) => {
   try {
-    const posts = await Post.find({ author: req.params.userId, status: 'public' })
-      .populate('author', 'displayName firstName lastName image bio')
-      .sort({ createdAt: -1 });
+    let query = Post.find({ author: req.params.userId, status: 'public' }).sort({ createdAt: -1 });
+    if (typeof query.select === 'function') {
+      query = query.select('-body -__v');
+    }
+    if (typeof query.populate === 'function') {
+      query = query.populate('author', 'displayName firstName lastName image bio');
+    }
+    if (typeof query.lean === 'function') {
+      query = query.lean();
+    }
+    const posts = await query;
 
     res.status(200).json({
       success: true,
@@ -274,6 +319,16 @@ export const getUserPublicPosts = async (req, res, next) => {
  */
 export const getPopularTags = async (req, res, next) => {
   try {
+    const now = Date.now();
+    if (popularTagsCache.data && now < popularTagsCache.expiry) {
+      res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=120');
+      return res.status(200).json({
+        success: true,
+        cached: true,
+        data: popularTagsCache.data,
+      });
+    }
+
     const tags = await Post.aggregate([
       { $match: { status: 'public' } },
       { $unwind: '$tags' },
@@ -282,6 +337,9 @@ export const getPopularTags = async (req, res, next) => {
       { $limit: 10 },
       { $project: { _id: 0, tag: '$_id', count: 1 } },
     ]);
+
+    popularTagsCache = { data: tags, expiry: now + 60 * 1000 };
+    res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=120');
 
     res.status(200).json({
       success: true,

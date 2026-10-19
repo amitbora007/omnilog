@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { authApi } from '../api/auth.js';
 
 const AuthContext = createContext(null);
@@ -8,30 +8,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState(null);
 
-  useEffect(() => {
-    // Check if token or error was passed in query parameter from Google OAuth callback
-    const urlParams = new URLSearchParams(window.location.search);
-    const tokenFromUrl = urlParams.get('token');
-    const errorFromUrl = urlParams.get('error');
-
-    if (errorFromUrl) {
-      setAuthError(decodeURIComponent(errorFromUrl));
-      // Clean query parameter from URL without reloading
-      const cleanUrl = window.location.pathname;
-      window.history.replaceState({}, document.title, cleanUrl);
-    }
-
-    if (tokenFromUrl) {
-      localStorage.setItem('omnilog_token', tokenFromUrl);
-      // Clean query parameter from URL without reloading
-      const cleanUrl = window.location.pathname;
-      window.history.replaceState({}, document.title, cleanUrl);
-    }
-
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
+  const checkAuth = useCallback(async () => {
     const token = localStorage.getItem('omnilog_token');
     // If no token exists, the user is an unauthenticated guest — avoid firing redundant 401 requests
     if (!token) {
@@ -59,17 +36,40 @@ export function AuthProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const clearAuthError = () => {
+  useEffect(() => {
+    // Check if token or error was passed in query parameter from Google OAuth callback
+    const urlParams = new URLSearchParams(window.location.search);
+    const tokenFromUrl = urlParams.get('token');
+    const errorFromUrl = urlParams.get('error');
+
+    if (errorFromUrl) {
+      setAuthError(decodeURIComponent(errorFromUrl));
+      // Clean query parameter from URL without reloading
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+
+    if (tokenFromUrl) {
+      localStorage.setItem('omnilog_token', tokenFromUrl);
+      // Clean query parameter from URL without reloading
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+
+    checkAuth();
+  }, [checkAuth]);
+
+  const clearAuthError = useCallback(() => {
     setAuthError(null);
-  };
+  }, []);
 
-  const loginWithGoogle = () => {
+  const loginWithGoogle = useCallback(() => {
     window.location.href = authApi.getGoogleAuthUrl();
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await authApi.logout();
     } catch (err) {
@@ -79,19 +79,22 @@ export function AuthProvider({ children }) {
       setUser(null);
       window.location.href = '/';
     }
-  };
+  }, []);
 
-  const value = {
-    user,
-    loading,
-    isAuthenticated: !!user,
-    isAdmin: user?.role === 'admin',
-    authError,
-    clearAuthError,
-    loginWithGoogle,
-    logout,
-    refreshUser: checkAuth,
-  };
+  const value = useMemo(
+    () => ({
+      user,
+      loading,
+      isAuthenticated: !!user,
+      isAdmin: user?.role === 'admin',
+      authError,
+      clearAuthError,
+      loginWithGoogle,
+      logout,
+      refreshUser: checkAuth,
+    }),
+    [user, loading, authError, clearAuthError, loginWithGoogle, logout, checkAuth]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

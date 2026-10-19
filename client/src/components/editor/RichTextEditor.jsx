@@ -19,7 +19,7 @@ import {
 import { sanitizeHtml } from '../../utils/sanitize.js';
 import { formatCodeSnippet } from '../../utils/codeFormatter.js';
 import { useToast } from '../common/Toast.jsx';
-import hljs from 'highlight.js';
+import hljs from '../../utils/highlight.js';
 import 'highlight.js/styles/github-dark.css';
 
 export default function RichTextEditor({

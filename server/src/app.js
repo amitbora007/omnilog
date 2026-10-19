@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
+import compression from 'compression';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import passport from 'passport';
@@ -23,6 +24,14 @@ connectDB();
 
 // Initialize Express app
 const app = express();
+
+// High-performance Gzip/Deflate response compression for API payloads > 1KB
+app.use(
+  compression({
+    threshold: 1024,
+    level: 6,
+  })
+);
 
 // Security HTTP headers
 app.use(

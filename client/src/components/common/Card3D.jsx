@@ -18,7 +18,6 @@ export default function Card3D({
 }) {
   const cardRef = useRef(null);
   const spotlightRef = useRef(null);
-  const [isHovered, setIsHovered] = useState(false);
   const prefersReducedMotion = useRef(false);
 
   useEffect(() => {
@@ -47,14 +46,12 @@ export default function Card3D({
   };
 
   const handleMouseEnter = () => {
-    setIsHovered(true);
     if (cardRef.current) {
       cardRef.current.style.transition = 'transform 0.1s ease-out, box-shadow 0.2s ease-out';
     }
   };
 
   const handleMouseLeave = () => {
-    setIsHovered(false);
     if (cardRef.current) {
       cardRef.current.style.transition = 'transform 0.5s ease-out, box-shadow 0.5s ease-out';
       cardRef.current.style.transform = `perspective(${perspective}px) rotateX(0deg) rotateY(0deg) translateZ(0px)`;

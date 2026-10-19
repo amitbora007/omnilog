@@ -123,10 +123,12 @@ export default function InteractiveBackground() {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+          const distSq = dx * dx + dy * dy;
 
           const maxDist = baseDistance * ((particles[i].z + particles[j].z) / 2);
-          if (dist < maxDist) {
+          const maxDistSq = maxDist * maxDist;
+          if (distSq < maxDistSq) {
+            const dist = Math.sqrt(distSq);
             const alpha = (1 - dist / maxDist) * 0.18 * ((particles[i].z + particles[j].z) / 2);
             ctx.strokeStyle = `rgba(129, 140, 248, ${alpha})`;
             ctx.lineWidth = 0.75;
@@ -161,8 +163,10 @@ export default function InteractiveBackground() {
           if (!isMobile) {
             const dx = mouse.x - p.x;
             const dy = mouse.y - p.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < mouse.radius && dist > 0) {
+            const distSq = dx * dx + dy * dy;
+            const radiusSq = mouse.radius * mouse.radius;
+            if (distSq < radiusSq && distSq > 0) {
+              const dist = Math.sqrt(distSq);
               const force = (1 - dist / mouse.radius) * 1.5;
               p.x -= (dx / dist) * force;
               p.y -= (dy / dist) * force;

@@ -6,7 +6,7 @@ import Card3D from '../common/Card3D.jsx';
 import { formatDate } from '../../utils/formatters.js';
 import { Clock, Edit3, Trash2, ArrowUpRight } from 'lucide-react';
 
-export default function PostCard({ post, isOwner = false, onDelete }) {
+function PostCard({ post, isOwner = false, onDelete }) {
   return (
     <Card3D className="h-full">
       <article className="bg-slate-900/60 rounded-2xl border border-white/10 hover:border-indigo-500/40 shadow-card hover:shadow-card-hover backdrop-blur-md flex flex-col h-full overflow-hidden group transition-all duration-300">
@@ -110,3 +110,5 @@ export default function PostCard({ post, isOwner = false, onDelete }) {
     </Card3D>
   );
 }
+
+export default React.memo(PostCard);

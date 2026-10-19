@@ -27,7 +27,7 @@ import {
   CheckCircle2,
   ShieldCheck,
 } from 'lucide-react';
-import hljs from 'highlight.js';
+import hljs from '../utils/highlight.js';
 import 'highlight.js/styles/github-dark.css';
 
 export default function PostViewPage() {

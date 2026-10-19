@@ -27,7 +27,7 @@ OmniLog employs an automated testing strategy designed for rapid feedback and re
 
 ---
 
-## 2. Test Suites Overview (47 Tests Across 5 Suites)
+## 2. Test Suites Overview (53 Tests Across 6 Suites)
 
 ### 1. Health & System Tests (`server/tests/health.test.js`)
 - `GET /api/health`: Asserts that the server returns `HTTP 200` with status `OK`, active database connectivity, and uptime telemetry.
@@ -58,6 +58,11 @@ OmniLog employs an automated testing strategy designed for rapid feedback and re
 - **Tag Normalization**: Verifies whitespace trimming, lowercase conversion, and duplicate removal.
 - **Excerpt Generation**: Validates clean text extraction without HTML tag leakage.
 - **JWT Helper Utilities**: Verifies token signing, verification, and decoding.
+
+### 6. Contact & Messaging Pipeline Tests (`server/tests/contact.test.js`)
+- **Payload Validation**: Verifies rejection of missing/short names, malformed email formats, and messages shorter than 10 characters.
+- **Successful Dispatch**: Validates standard inquiry submission and optional subject handling, returning `HTTP 200` with simulation mode when running without external API keys.
+- **React Email Template Rendering**: Tests server-side HTML email string compilation via `@react-email/render` with user data interpolation.
 
 ---
 

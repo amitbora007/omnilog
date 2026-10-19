@@ -92,16 +92,26 @@ OmniLog uses semantic tokens configured in `client/tailwind.config.js` and `clie
 ### 5. Multi-Plane Hero & Asymmetric 2-Column Split (`LandingPage.jsx`)
 - **Elimination of Side Void via 2-Column Grid (`lg:grid-cols-12 max-w-7xl`)**:
   - **Left Column (`lg:col-span-6`)**: Contains the left-aligned hero headline, descriptive value proposition copy, Google OAuth / Feed CTAs, and performance telemetry pill badges.
-  - **Right Column (`lg:col-span-6`)**: Hosts the interactive 3D Code Studio Terminal (`Card3D`) with multi-file tabs (`raft-consensus.js`, `distributed_queue.rs`, `schema.sql`) and dark syntax styling.
+  - **Right Column (`lg:col-span-6`)**: Hosts the interactive 3D Hero Showcase ([`HeroShowcase.jsx`](file:///home/amit.bora/Downloads/ai/Omnilog/client/src/components/landing/HeroShowcase.jsx)) inside a specular tilt card (`Card3D`). Features 3 interactive tabs:
+    - **Reader Experience**: Live article reading simulation with dynamic scroll progress bar (78%), author metadata badge, syntax-highlighted code block with line numbers, and interactive tag chips.
+    - **Author Studio**: Live animated simulated typing into an obsidian editor canvas with dynamic word counts and floating formatting pills (`H2`, `Code`, `Quote`).
+    - **Engine Telemetry**: Live performance telemetry cards displaying sub-50ms FCP, 87.5 kB modular highlight bundle (-90.8%), 53/53 tests passing, TLS 1.2 security, and Gzip response compression.
 - **Layered Parallax Hierarchy**:
   - Cosmic ambient auroras: `speed: -0.2` (atmospheric counter-drift).
   - Main headline and subtitle: `speed: 0.05` (smooth float).
   - Floating tech telemetry badges: `speed: -0.05` (subtle counter-balance).
   - Synchronized Value Pillars: Unified row parallax (`speed: 0.04`) and `items-stretch` CSS grid enforcing 100% equalized card heights, widths, and seamless vertical alignment across all viewports.
+- **Progressive Batch Publication Feed**:
+  - Landing page renders an initial batch of 3 featured publications followed by a dynamic "Load More" action button with live remaining count indicator.
 
 ### 6. Wide Responsive Feed Stream & Sticky Community Sidebar (`FeedPage.jsx`)
 - **2-Column Responsive Layout (`max-w-7xl mx-auto`)**:
-  - **Main Stream Column (`lg:col-span-8`)**: Full-width glass search and tag filter bar, post count telemetry, balanced 2-column card grid (`sm:grid-cols-2`), and pagination controls. Eliminates empty columns even when few posts exist.
+  - **Main Stream Column (`lg:col-span-8`)**:
+    - Full-width glass search and tag filter bar with active tag removal chip.
+    - **Dual-Mode Feed View**: Readers can toggle between:
+      - **Infinite Stream**: Seamless continuous scroll powered by an `IntersectionObserver` sentinel, loading successive pages as the reader approaches the viewport bottom.
+      - **Paginated Feed**: Discrete page-by-page browsing with numbered page pills (`[1] [2]...`), Previous/Next buttons, live range display, and instant smooth scroll-to-top on page change.
+    - Balanced 2-column card grid (`sm:grid-cols-2`) with `React.memo(PostCard)` memoization for high-framerate rendering during filter operations.
   - **Right Sticky Sidebar (`lg:col-span-4`)**:
     - **Community Spotlight Card**: 3D tilt card encouraging engineering contributions with fast CTAs.
     - **Featured Topics Cloud**: Interactive pill badges with real-time tag filtering.
@@ -135,6 +145,7 @@ OmniLog uses semantic tokens configured in `client/tailwind.config.js` and `clie
 - **Author-Exclusive Access**: Dedicated strictly to standard authors. If an authenticated administrator navigates to `/dashboard`, they are automatically redirected to the centralized Super Admin Console (`/admin`).
 - **KPI Metrics Deck**: 3 glowing cards (Total Publications, Public Live, Private Drafts) with custom gradient iconography spanning `max-w-7xl`.
 - **Frosted Glass Table**: Dark obsidian data table with search filtering, status tabs, and action icons.
+- **Integrated Table Pagination (`DataTablePagination.jsx`)**: 10 items per page with live range indicator (`Showing X to Y of Z entries`), numbered page buttons, and Previous/Next bounds handling.
 - **Delete Modal Confirmation**: Glassmorphism confirmation dialog preventing accidental publication loss.
 
 ### 10. Unified Super Admin Console (`AdminPage.jsx`) & Role-Exclusive Navigation
@@ -143,6 +154,9 @@ OmniLog uses semantic tokens configured in `client/tailwind.config.js` and `clie
   - **Standard Authors**: Display **Author Dashboard** (`/dashboard`) in desktop/mobile navigation and **My Dashboard** in the user dropdown.
   - **Contextual Post Authoring**: In [`EditorPage.jsx`](file:///home/amit.bora/Downloads/ai/Omnilog/client/src/pages/EditorPage.jsx) and [`PostViewPage.jsx`](file:///home/amit.bora/Downloads/ai/Omnilog/client/src/pages/PostViewPage.jsx), back links and post deletion redirects dynamically navigate to `/admin` for administrators and `/dashboard` for standard authors.
 - **Dual Tab Deep-Linking**: URL-synchronized switching (`?tab=posts` ↔ `?tab=users`) supporting `/admin/posts` and `/admin/users` across `max-w-7xl`.
+- **Dual Table Pagination (`DataTablePagination.jsx`)**:
+  - **Publications Table**: Responsive pagination handling large story catalogs with real-time scope switching (`All Posts` vs `My Posts Only`).
+  - **User Accounts Table**: Paginated user management table with role and status badges, search filtering, and instant page resetting on query changes.
 - **Live Data Refresh Controls**: Frosted glass refresh buttons with animated spinning loading indicators for real-time data sync without full page reload.
 - **System Metrics Deck**: Live system statistics across publications and registered users.
 - **Obsidian Administrative Modals**: Create User, Edit User, Delete User (with cascade deletion warning count), and Delete Publication modals styled in acrylic obsidian glass.

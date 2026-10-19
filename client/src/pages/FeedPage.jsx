@@ -42,6 +42,7 @@ export default function FeedPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const sentinelRef = useRef(null);
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
     loadPopularTags();
@@ -56,8 +57,11 @@ export default function FeedPage() {
     }
   };
 
-  const loadPosts = async (targetPage = 1, isFilterChange = false) => {
-    if (targetPage === 1 || isFilterChange || viewMode === 'paginated') {
+  const loadPosts = async (targetPage = 1, isFilterChange = false, explicitMode = null) => {
+    const activeMode = explicitMode || viewMode;
+    const isReplacing = targetPage === 1 || isFilterChange || activeMode === 'paginated';
+
+    if (isReplacing) {
       setLoading(true);
     } else {
       setLoadingMore(true);
@@ -72,7 +76,7 @@ export default function FeedPage() {
       });
 
       const newPosts = res.data || [];
-      if (targetPage === 1 || isFilterChange || viewMode === 'paginated') {
+      if (isReplacing) {
         setPosts(newPosts);
       } else {
         setPosts((prev) => {
@@ -94,17 +98,22 @@ export default function FeedPage() {
   // Triggered on tag or search change
   useEffect(() => {
     setSearchQuery(currentSearch);
-    setPage(1);
-    loadPosts(1, true);
+    if (page !== 1) {
+      setPage(1);
+    } else {
+      loadPosts(1, true);
+    }
   }, [currentTag, currentSearch]);
 
   // Triggered on page change (for infinite scroll append or pagination switch)
   useEffect(() => {
-    if (page > 1) {
-      loadPosts(page, false);
-      if (viewMode === 'paginated') {
-        window.scrollTo({ top: 180, behavior: 'smooth' });
-      }
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    loadPosts(page, false);
+    if (viewMode === 'paginated') {
+      window.scrollTo({ top: 180, behavior: 'smooth' });
     }
   }, [page]);
 
@@ -147,8 +156,11 @@ export default function FeedPage() {
   const handleViewModeChange = (mode) => {
     if (mode === viewMode) return;
     setViewMode(mode);
-    setPage(1);
-    loadPosts(1, true);
+    if (page !== 1) {
+      setPage(1);
+    } else {
+      loadPosts(1, true, mode);
+    }
   };
 
   const handleTagSelect = (tag) => {
@@ -363,30 +375,55 @@ export default function FeedPage() {
 
               {/* Paginated Mode Controls */}
               {viewMode === 'paginated' && totalPages > 1 && (
-                <div className="flex items-center justify-center gap-3 pt-6 border-t border-white/10">
-                  <button
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                    className="inline-flex items-center gap-1 px-3.5 py-2 rounded-xl border border-white/10 bg-slate-900/80 text-slate-300 hover:text-white hover:bg-slate-800 text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed shadow-card transition-colors"
-                    aria-label="Previous page"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                    Previous
-                  </button>
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-white/10">
+                  <div className="text-xs font-mono text-slate-400">
+                    Showing <span className="font-bold text-white">{(page - 1) * 6 + 1}</span> to{' '}
+                    <span className="font-bold text-white">{Math.min(totalCount, page * 6)}</span> of{' '}
+                    <span className="font-bold text-indigo-400">{totalCount}</span> publications
+                  </div>
 
-                  <span className="px-4 text-xs font-mono font-bold text-slate-300">
-                    Page {page} of {totalPages}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      disabled={page === 1}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-white/10 bg-slate-900/80 text-slate-300 hover:text-white hover:bg-slate-800 text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed shadow-card transition-colors cursor-pointer"
+                      aria-label="Previous page"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                      Previous
+                    </button>
 
-                  <button
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={page === totalPages}
-                    className="inline-flex items-center gap-1 px-3.5 py-2 rounded-xl border border-white/10 bg-slate-900/80 text-slate-300 hover:text-white hover:bg-slate-800 text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed shadow-card transition-colors"
-                    aria-label="Next page"
-                  >
-                    Next
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
+                    {/* Numbered page pills */}
+                    <div className="flex items-center gap-1 px-1">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => {
+                        const isActive = num === page;
+                        return (
+                          <button
+                            key={`feed-page-${num}`}
+                            onClick={() => setPage(num)}
+                            aria-current={isActive ? 'page' : undefined}
+                            className={`min-w-[28px] h-7 px-2 rounded-lg text-xs font-mono font-semibold transition-all cursor-pointer ${
+                              isActive
+                                ? 'bg-indigo-600 text-white shadow-glow-indigo border border-indigo-400/50'
+                                : 'text-slate-400 hover:text-white hover:bg-white/10 border border-transparent'
+                            }`}
+                          >
+                            {num}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <button
+                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={page === totalPages}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-white/10 bg-slate-900/80 text-slate-300 hover:text-white hover:bg-slate-800 text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed shadow-card transition-colors cursor-pointer"
+                      aria-label="Next page"
+                    >
+                      Next
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               )}
             </>

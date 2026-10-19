@@ -32,6 +32,7 @@ During the architectural audit of the legacy Handlebars application, the followi
 | **BUG-010** | **Medium** | **Vite Monolithic Bundle (>500 kB) Build Warning**: Bundling `highlight.js` (950 kB) and all pages synchronously generated a 1,315 kB initial bundle that exceeded Rollup limits and slowed initial load. | Configured Rollup `manualChunks` in `vite.config.js` isolating `vendor-highlight`, `vendor-react`, `vendor-purify`, `vendor-icons`; lazy loaded secondary routes. Shrank entry chunk by 97.8% (to 28 kB). | **RESOLVED** |
 | **BUG-011** | **High** | **Critical & High Transitive Dependency CVEs**: `npm audit` flagged critical `proxy-addr` CIDR parsing vulnerability, `passport-oauth2` state bypass, `morgan` log injection, and `braces`/`micromatch` ReDoS. | Added npm `overrides` in root `package.json`; updated Express, Helmet, Morgan, and DOMPurify. Achieved 0 production vulnerabilities (`npm audit --omit=dev`). | **RESOLVED** |
 | **BUG-012** | **High** | **Mobile Initial Load Black Screen & High Cellular Latency**: Empty `<div id="root"></div>` left mobile users on cellular connections staring at a pitch-black screen for 3-6s. Google Fonts stylesheet was render-blocking; landing page had double network waterfall; 3D canvas caused GPU/CPU contention. | Implemented instant in-HTML app shell and splash skeleton in `<div id="root">` (< 50ms FCP); converted Google Fonts to non-blocking preload; eagerly imported `LandingPage`; optimized mobile canvas (18 particles, disabled `shadowBlur`). | **RESOLVED** |
+| **UI-002** | **Medium** | **Unbounded Publications Dumping on Landing & Explore Pages**: Landing and feed pages rendered all returned publications in a single dump, hurting initial render performance, overwhelming mobile viewports, and pushing the landing page contact form / footer out of reachable view. | Implemented progressive batch loading on Landing Page (initial 3 cards + dynamic "Load More" counter with post deduplication); created dual-mode Explore Feed (`/feed`) featuring an `IntersectionObserver` Infinite Stream and an explicit Paginated mode with back-to-top quick scroll. | **RESOLVED** |
 
 ---
 
@@ -39,7 +40,7 @@ During the architectural audit of the legacy Handlebars application, the followi
 
 | Bug ID | Title | Component | Severity | Discovered | Status | Notes |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| *No active unresolved bugs at this time.* | All systems operational; 6/6 test suites and 53/53 tests passing. | Monorepo | — | 2026-10-19 | **CLEAN** | All reported issues (BUG-001 through BUG-012) resolved. |
+| *No active unresolved bugs at this time.* | All systems operational; 6/6 test suites and 53/53 tests passing. | Monorepo | — | 2026-10-19 | **CLEAN** | All reported issues (BUG-001 through BUG-012, UI-001 through UI-002) resolved. |
 
 ---
 

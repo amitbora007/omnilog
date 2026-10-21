@@ -15,6 +15,7 @@ import authRoutes from './routes/auth.js';
 import postRoutes from './routes/posts.js';
 import userRoutes from './routes/users.js';
 import contactRoutes from './routes/contact.js';
+import healthRoutes from './routes/health.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 // Load environment variables
@@ -67,6 +68,10 @@ app.use(
   })
 );
 
+// Health check endpoints (exempt from rate limiting for cloud load balancers & monitors)
+app.use('/api/health', healthRoutes);
+app.use('/health', healthRoutes);
+
 // Global API rate limiter (300 requests per 15 minutes per IP)
 const globalApiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -95,17 +100,6 @@ configurePassport();
 if (process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) {
   app.use(morgan('dev'));
 }
-
-// Health check endpoint (accessible via /api/health and /health)
-app.get(['/api/health', '/health'], (req, res) => {
-  res.status(200).json({
-    success: true,
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
-    uptime: `${Math.floor(process.uptime())}s`,
-  });
-});
 
 // Mount API routes (support both /api/* and root paths)
 app.use('/api/auth', authRoutes);

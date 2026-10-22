@@ -6,6 +6,12 @@ Built with **React.js** (pure JavaScript with Vite & Tailwind CSS) and **Node.js
 
 ---
 
+<p align="center">
+  <img src="./docs/images/omnilog-preview.png" alt="OmniLog Platform Preview" width="100%" />
+</p>
+
+---
+
 ## ✨ Key Platform Features
 
 - **Interactive 3D Spatial Canvas & Parallax**: Hardware-accelerated CSS 3D tilt cards (`Card3D.jsx`), GPU-composited velocity planes (`ParallaxLayer.jsx`), and native HTML5 Canvas 2D constellation background with cursor gravity field.
